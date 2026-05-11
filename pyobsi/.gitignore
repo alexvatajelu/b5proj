@@ -1,0 +1,53 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Conda / virtual environments ──────────────────────────────────────────────
+# Don't commit the env itself — use environment.yml + setup.ps1 to recreate it
+envs/
+.env/
+.venv/
+obsillm_env/
+conda-env/
+
+# ── Ollama models ─────────────────────────────────────────────────────────────
+# Models live in %USERPROFILE%\.ollama\models — never commit them
+*.gguf
+*.ggml
+*.bin
+models/
+
+# ── Obsidian vault data ────────────────────────────────────────────────────────
+# Don't accidentally commit someone's personal vault
+*.obsidian/workspace
+*.obsidian/workspace.json
+vault/
+vaults/
+
+# ── Project runtime files ─────────────────────────────────────────────────────
+# The sidecar analysis cache — specific to each user's vault run
+_system_analysis.json
+
+# ── Secrets / config ──────────────────────────────────────────────────────────
+.env
+*.env
+config_local.py
+secrets.py
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
