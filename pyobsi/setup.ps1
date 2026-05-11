@@ -44,7 +44,7 @@ $modelExists = ollama list 2>$null | Select-String "llama3.1:8b"
 if ($modelExists) {
     Write-Host "   Model 'llama3.1:8b' already present — skipping pull." -ForegroundColor Gray
 } else {
-    Write-Host "   Pulling llama3.1:8b (~4.7GB, this will take a while)..."
+    Write-Host "   Pulling llama3.1:8b (approx 4.7GB, this will take a while)..."
     ollama pull llama3.1:8b
     if ($LASTEXITCODE -ne 0) {
         Write-Host "   ERROR: ollama pull failed. Make sure Ollama is running (ollama serve)." -ForegroundColor Red
