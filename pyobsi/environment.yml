@@ -8,3 +8,4 @@ dependencies:
   - pip:
     - requests
     - duckduckgo-search
+    - customtkinter
