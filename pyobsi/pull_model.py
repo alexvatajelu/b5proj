@@ -10,6 +10,7 @@ import requests
 
 OLLAMA_BASE = "http://localhost:11434"
 MODEL = "llama3.1:8b"
+#MODEL = "qwen2.5:3b"
 
 
 def pull_model(model: str = MODEL) -> None:

@@ -1,0 +1,98 @@
+
+conda env
+
+
+ollama pull llama3.1:8b
+
+
+
+
+example: 
+uk government
+met police
+facial recognition
+lfr vans
+corsight ai
+facewatch
+
+
+main focus is facial recognition, looking at organisations, government, technology, companies, investors, important individuals etc but not specific articles or stories
+
+
+2, 0.6, 6
+
+
+
+test results 1:
+
+
+
+
+s/b5proj/pyobsi/pyobsi1/test_llm_functions.py
+
+============================================================
+TEST 1 — find_related_subjects
+============================================================
+Subject: 'CIA'  |  Context: 'Cold War espionage investigation'
+
+Found 6 related subjects:
+
+[
+  {
+    "name": "Central Intelligence Agency Act of 1949",
+    "relevance": 1.0,
+    "reason": "This act established the CIA's authority and exempted it from most Congressional oversight."
+  },
+  {
+    "name": "KGB",
+    "relevance": 0.9,
+    "reason": "The KGB was a Soviet intelligence agency that often clashed with the CIA during the Cold War."
+  },
+  {
+    "name": "Cold War",
+    "relevance": 0.9,
+    "reason": "The Cold War provided the context for CIA operations and espionage activities."
+  },
+  {
+    "name": "MI5",
+    "relevance": 0.8,
+    "reason": "MI5 was a British intelligence agency that worked closely with the CIA to counter Soviet espionage efforts."
+  },
+  {
+    "name": "Wikipedia",
+    "relevance": 0.6,
+    "reason": "The Wikipedia article on the CIA provides information about its history and operations during the Cold War era."
+  },
+  {
+    "name": "Alexandra Sirola",
+    "relevance": 0.5,
+    "reason": "Alexandra Sirola wrote an article about the role of espionage during the Cold War, mentioning the CIA as a dominant agency."
+  }
+]
+
+============================================================
+TEST 2 — get_connection
+============================================================
+Subject A: 'CIA'  |  Subject B: 'KGB'  |  Context: 'Cold War espionage investigation'
+
+Connection result:
+
+{
+  "score": 0.7,
+  "note": "The CIA and KGB have had documented interactions, including a meeting between NKVD and OSS in 1943, and instances of double agents working for both sides.",
+  "connection_type": "associative"
+}
+
+============================================================
+TEST 3 — get_connection (expected low score)
+============================================================
+Subject A: 'CIA'  |  Subject B: 'Impressionist painting'
+
+Connection result:
+
+{
+  "score": 0.0,
+  "note": "There is no documented evidence of a direct relationship between the CIA and Impressionist painting.",
+  "connection_type": "associative"
+}
+(obsillm_env) PS C:\Users\alexv\Documents\repos\b5proj> 
