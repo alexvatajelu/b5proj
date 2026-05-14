@@ -1,0 +1,20 @@
+{
+  "name": "mapp",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "p5": "^2.2.3",
+    "papaparse": "^5.5.3",
+    "require": "^0.4.4",
+    "three": "^0.184.0"
+  }
+}

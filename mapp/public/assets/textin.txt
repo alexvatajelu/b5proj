@@ -1,0 +1,566 @@
+High St North,
+East Ham
+08/01/25 4hr 47m Crime Hotspot 15095 0.64 10 10 0 0 0 0% 4 3 3 9780
+Green St,
+Newham
+08/01/25 5hr 37m Crime Hotspot 15095 0.64 6 6 0 0 0 0% 3 3 0 8480
+Powis St,
+Woolwich
+10/01/25 6hr 27m Crime Hotspot 15133 0.64 14 14 0 0 0 0% 5 3 6 15480
+Camberwell
+Green
+10/01/25 5hr 58m Crime Hotspot 15133 0.64 4 4 0 0 0 0% 3 0 1 3975
+Rye Lane,
+Peckham
+14/01/25 6hr 20m Crime Hotspot 15177 0.64 12 11 1 0 0 0% 4 0 7 10245
+Wembley
+Central
+14/01/25 5hr 22m Crime Hotspot 15177 0.64 11 11 0 0 0 0% 7 2 2 13950
+Streatham
+High Rd
+16/01/25 5hr 48m Crime Hotspot 15172 0.64 2 2 0 0 0 0% 2 0 0 3890
+Stratford
+B’way
+16/01/25 6hr 35m Crime Hotspot 15172 0.64 24 23 1 0 0 0% 11 2 10 25335
+Town Sq,
+Walthamstow
+22/01/25 4hr 22m Crime Hotspot 14919 0.64 13 12 0 1 0 0.008% 6 1 5 12120
+Walworth Rd 22/01/25 5h 45m Crime Hotspot 14919 0.64 3 3 0 0 0 0% 1 1 1 5200
+Powis St,
+Woolwich
+24/01/25 6h 13m Crime Hotspot 14966 0.64 11 11 0 0 0 0% 6 0 5 15711
+High St North,
+East Ham
+24/01/25 6h 03m Crime Hotspot 14966 0.64 13 13 0 0 0 0% 4 2 7 17265
+Wembley
+Central
+28/01/25 5h 17m Crime Hotspot 15158 0.64 9 9 0 0 0 0% 6 1 2 9990
+Kilburn High
+Rd
+28/01/25 6h 09m Crime Hotspot 15158 0.64 15 15 0 0 0 0% 9 0 6 9581
+Stratford
+B’way
+30/01/25 6h 18m Crime Hotspot 15135 0.64 16 15 1 0 0 0% 3 2 10 21050
+Leyton 30/01/25 4h 42m Crime Hotspot 15135 0.64 5 5 0 0 0 0% 0 3 2 5645
+South St,
+Romford
+04/02/25 6h 08m Crime Hotspot 16174 0.64 16 16 0 0 0 0% 5 5 6 13110
+Clapham Junc 04/02/25 6h 22m Crime Hotspot 16174 0.64 6 6 0 0 0 0% 2 1 3 10625
+Dagenham
+Heathway
+06/02/25 5h 51m Crime Hotspot 16234 0.64 11 10 0 1 0 0.008% 3 2 5 12660
+High St, Ilford 06/02/25 6h 05m Crime Hotspot 16234 0.64 9 9 0 0 0 0% 3 1 5 19733
+High St,
+Sutton
+11/02/25 6h 06m Crime Hotspot 16300 0.64 7 7 0 0 0 0% 2 3 2 14430
+Shepherds
+Bush Green
+11/02/25 5h 50m Crime Hotspot 16300 0.64 8 8 0 0 0 0% 4 2 2 17310
+Barking 13/02/25 5h 42m Crime Hotspot 16310 0.64 13 13 0 0 0 0% 10 0 3 13695
+Oxford St 13/02/25 4h 24m Crime Hotspot 16310 0.64 12 12 0 0 0 0% 6 0 6 29025
+Hammersmith
+Broadway
+19/02/25 5h 52m Crime Hotspot 16364 0.64 13 13 0 0 0 0% 4 1 8 21,940
+Clarence St,
+Kingston
+19/02/25 5h 51m Crime Hotspot 16364 0.64 9 9 0 0 0 0% 3 2 4 17850
+Westfield,
+Shepherds
+Bush
+21/02/25 5h 57m Crime Hotspot 16314 0.64 6 6 0 0 0 0% 5 1 0 30305
+High St, Ilford 21/02/25 4h 57m Crime Hotspot 16314 0.64 19 19 0 0 0 0% 8 1 10 16485
+Oxford Circus 25/02/25 5h 21m Crime Hotspot 16204 0.64 14 12 2 0 0 0% 5 2 5 32160
+Tooting B’Way 25/02/25 6h 21m Crime Hotspot 16204 0.64 9 9 0 0 0 0% 3 1 5 16380
+South St,
+Romford
+27/02/25 6h 00m Crime Hotspot 15728 0.64 13 13 0 0 0 0% 5 2 6 14160
+North End,
+Croydon
+27/02/25 6h 52m Crime Hotspot 15728 0.64 20 19 0 1 0 0.004% 8 3 8 24365
+Deptford High
+St
+05/03/25 5h 38m Crime Hotspot 15656 0.64 6 6 0 0 0 0% 3 2 1 8440
+West Croydon 05/03/25 4h 14m Crime Hotspot 15656 0.64 17 17 0 0 0 0% 7 1 9 15875
+Wood Green 07/03/25 5h 03m Crime Hotspot 15652 0.64 13 13 0 0 0 0% 7 0 6 15315
+High St,
+Hounslow
+07/03/25 6h 09m Crime Hotspot 15652 0.64 7 7 0 0 0 0% 1 2 4 21810
+Dalston
+Kingsland
+11/03/25 5h 36m Crime Hotspot 15680 0.64 12 12 0 0 0 0% 5 3 4 13210
+Edmonton
+Green
+11/03/25 5h 48m Crime Hotspot 15680 0.64 7 7 0 0 0 0% 2 2 3 10260
+Lewisham
+High St
+13/03/25 4h 44m Crime Hotspot 15693 0.64 18 18 0 0 0 0% 8 2 8 11080
+Ealing B’way 13/03/25 6h 03m Crime Hotspot 15693 0.64 10 9 0 1 0 0.005% 4 1 4 19320
+Seven Sisters
+Rd
+19/03/25 6h 01m Crime Hotspot 15728 0.64 10 10 0 0 0 0% 5 0 5 7695
+High St North,
+East Ham
+19/03/25 5h 19m Crime Hotspot 15728 0.64 10 10 0 0 0 0% 3 0 7 12083
+Stratford
+Westfield
+22/03/25 4h 15m Crime Hotspot 15858 0.64 13 12 0 1 0 0.003% 9 0 3 32835
+North End
+Croydon
+22/03/25 4h 32m Crime Hotspot 15858 0.64 16 15 1 0 0 0% 5 8 2 20115
+Deptford High
+Street
+25/03/25 5h 35m Crime Hotspot 15903 0.64 5 5 0 0 0 0% 1 1 3 5885
+Wood Green 25/03/25 4h 04m Crime Hotspot 15903 0.64 11 11 0 0 0 0% 7 0 4 13380
+Powis St,
+Woolwich
+27/03/25 6h 27m Crime Hotspot 15902 0.64 16 16 0 0 0 0% 8 1 7 20471
+Dalston
+Kingsland
+27/03/25 5h 50m Crime Hotspot 15902 0.64 7 7 0 0 0 0% 7 0 0 14580
+High St,
+Bromley
+01/04/25 5h 50m Crime Hotspot 16022 0.64 8 8 0 0 0 0% 3 0 5 11835
+High St,
+Camden
+01/04/25 5h 51m Crime Hotspot 16022 0.64 7 7 0 0 0 0% 1 1 5 12915
+Stratford
+B’way
+03/04/25 4h 30m Crime Hotspot 16080 0.64 11 11 0 0 0 0% 5 0 6 14205
+Kilburn High
+Rd
+03/04/25 5h 56m Crime Hotspot 16080 0.64 12 12 0 0 0 0% 4 1 7 11085
+Stratford
+Westfield
+09/04/25 6h 50m Crime Hotspot 15972 0.64 16 16 0 0 0 0% 3 2 11 32920
+Wembley
+Central
+09/04/25 5h 14m Crime Hotspot 15972 0.64 10 10 0 0 0 0% 6 2 2 9630
+Walthamstow
+Central
+11/04/25 5h 16m Crime Hotspot 16025 0.64 20 20 0 0 0 0% 7 2 11 19240
+Kings Cross 11/04/25 3h 50m Crime Hotspot 16025 0.64 6 6 0 0 0 0% 4 0 2 8385
+Walworth Rd 15/04/25 4h 48m Crime Hotspot 15998 0.64 8 8 0 0 0 0% 2 4 2 12120
+Stratford
+B’way
+15/04/25 5h 40m Crime Hotspot 15998 0.64 12 12 0 0 0 0% 4 1 7 13285
+Rye Lane,
+Peckham
+17/04/25 3h 35m Crime Hotspot 16000 0.64 13 12 1 0 0 0% 6 0 6 12145
+Green St,
+Newham
+17/04/25 5h 36m Crime Hotspot 16000 0.64 15 15 0 0 0 0% 5 2 8 16940
+George St,
+Croydon
+22/04/25 4h 46m Crime Hotspot 15981 0.64 9 6 3 0 0 0% 3 0 3 8030
+Walthamstow
+Central
+22/04/25 5h 28m Crime Hotspot 15981 0.64 18 18 0 0 0 0% 10 1 7 17755
+Oxford Circus 24/04/25 4h 37m Crime Hotspot 16048 0.64 12 11 1 0 0 0% 7 0 4 28805
+Wembley
+Central
+24/04/25 5h 55m Crime Hotspot 16048 0.64 4 4 0 0 0 0% 2 1 1 11445
+Westfield,
+Stratford
+30/04/25 7h 07m Crime Hotspot 16165 0.64 18 18 0 0 0 0% 5 2 11 39855
+Kilburn High
+Rd
+30/04/25 5h 43m Crime Hotspot 16165 0.64 9 9 0 0 0 0% 5 0 4 8970
+London Rd,
+Croydon
+02/05/25 6h 04m Crime Hotspot 16199 0.64 23 22 1 0 0 0% 6 1 15 12210
+Bond St Stn 02/05/25 6h 32m Crime Hotspot 19199 0.64 7 7 0 0 0 0% 5 1 1 30855
+Mare St,
+Hackney
+06/05/25 5h 45m Crime Hotspot 16189 0.64 9 9 0 0 0 0% 4 0 5 2490
+Shepherds
+Bush Green
+06/05/25 6h 00m Crime Hotspot 16189 0.64 6 6 0 0 0 0% 2 1 3 18050
+Powis St,
+Woolwich
+08/05/25 6h 15m Crime Hotspot 16109 0.64 10 10 0 0 0 0% 3 2 5 17310
+Station Lane,
+Hornchurch
+08/05/25 6h 13m Crime Hotspot 16109 0.64 3 3 0 0 0 0% 0 1 2 4895
+High Street,
+Ilford
+10/05/25 5h 46m Crime Hotspot 16112 0.64 10 10 0 0 0 0% 3 3 4 17665
+Station
+Parade,
+Barking
+10/05/25 5h 25m Crime Hotspot 16113 0.64 10 10 0 0 0 0% 6 0 4 15001
+Oxford Circus 13/05/25 5h 18m Crime Hotspot 15974 0.64 8 8 0 0 0 0% 2 1 5 36140
+High St,
+Harlesden
+13/05/25 5h 47m Crime Hotspot 15974 0.64 8 8 0 0 0 0% 4 1 3 8430
+High Street,
+Ilford
+15/05/25 4h 48m Crime Hotspot 16108 0.64 10 10 0 0 0 0% 8 0 2 13595
+Station
+Parade,
+Barking
+15/05/25 6h 11m Crime Hotspot 16108 0.64 7 7 0 0 0 0% 5 0 2 15440
+Dagenham
+Heathway
+21/05/25 6h 14m Crime Hotspot 16075 0.64 8 8 0 0 0 0% 2 3 3 13215
+South St,
+Romford
+21/05/25 6h 22m Crime Hotspot 16075 0.64 11 11 0 0 0 0% 4 1 6 16890
+Victoria St 23/05/25 5h 52m Crime Hotspot 16007 0.64 10 9 0 0 0 0% 5 2 2 14725
+Dalston
+Kingsland
+23/05/25 5h 46m Crime Hotspot 16006 0.64 15 15 0 0 0 0% 10 1 4 13200
+Powis St,
+Woolwich
+27/05/25 5h 57m Crime Hotspot 16013 0.64 10 9 0 1 0 0.008% 7 0 3 11476
+Lewisham
+High St
+27/05/25 5h 56m Crime Hotspot 16013 0.64 11 11 0 0 0 0% 6 1 4 10965
+High St,
+Bexleyheath
+29/05/25 5h 22m Crime Hotspot 15869 0.64 6 6 0 0 0 0% 2 0 4 11518
+Edgware Rd 29/05/25 5h 47m Crime Hotspot 15869 0.64 6 6 0 0 0 0% 6 0 0 8560
+Green St,
+Newham
+04/06/25 3h 26m Crime Hotspot 16083 0.64 15 15 0 0 0 0% 8 1 6 14625
+Tooting B’way 04/06/25 5h 02m Crime Hotspot 16083 0.64 16 16 0 0 0 0% 4 2 10 14985
+Richmond
+High St
+06/06/25 6h 06m Crime Hotspot 16101 0.64 9 9 0 0 0 0% 3 1 5 13065
+Shoreditch
+High St
+06/06/25 4h 43m Crime Hotspot 16101 0.64 1 1 0 0 0 0% 1 0 0 9915
+Stratford
+B’way
+10/06/25 5h 34m Crime Hotspot 16038 0.64 10 10 0 0 0 0% 7 1 2 15315
+Peckham Rye 10/06/25 3h 21m Crime Hotspot 16039 0.64 5 5 0 0 0 0% 4 0 1 10535
+Tottenham
+Hale
+12/06/25 6h 11m Crime Hotspot 16043 0.64 5 4 0 1 0 0.006% 2 0 3 14975
+High St North,
+East Ham
+12/06/25 6h 14m Crime Hotspot 16043 0.64 7 6 1 0 0 0% 4 1 1 17430
+Ealing B’way 17/06/25 6h 16m Crime Hotspot 16216 0.64 8 8 0 0 0 0% 3 3 2 18885
+Bethnal Green
+Rd
+17/06/25 6h 20m Crime Hotspot 16217 0.64 13 12 1 0 0 0% 3 2 7 11625
+Walthamstow
+Central
+19/06/25 5h 29m Crime Hotspot 16200 0.64 12 12 0 0 0 0% 8 1 3 15950
+Wood Green
+High Rd
+19/06/25 5h 51m Crime Hotspot 16201 0.64 19 19 0 0 0 0% 6 1 12 12120
+Poplar –
+Vesey Path
+24/06/25 5h 47m Crime Hotspot 16090 0.64 7 7 0 0 0 0% 2 0 5 6780
+Station Rd,
+Hayes
+24/06/25 4h 50m Crime Hotspot 16090 0.64 4 4 0 0 0 0% 1 0 3 8282
+Clarence St,
+Kingston
+26/06/25 5h 54m Crime Hotspot 16111 0.64 11 10 1 0 0 0% 5 2 3 22560
+Seven Sisters,
+Tottenham
+26/06/25 6h 00m Crime Hotspot 16111 0.64 9 8 1 0 0 0% 3 2 3 10180
+Kings Cross
+Station
+01/07/25 4h 00m Crime Hotspot 16206 0.64 0 0 0 0 0 0% 0 0 0 9960
+Uxbridge Rd,
+Shepherds
+Bush
+01/07/25 5h 00m Crime Hotspot 16206 0.64 7 7 0 0 0 0% 2 1 4 11075
+Powis St,
+Woolwich
+03/07/25 5h 11m Crime Hotspot 16276 0.64 13 13 0 0 0 0% 5 1 7 14590
+Oxford Circus 03/07/25 4h 30m Crime Hotspot 16276 0.64 9 9 0 0 0 0% 6 2 1 32555
+Walthamstow
+Central
+05/07/25 3h 42m Crime Hotspot 15935 0.64 12 10 2 0 0 0% 7 1 2 23848
+Green St,
+Newham
+05/07/25 5h 59m Crime Hotspot 15936 0.64 7 7 0 0 0 0% 3 1 3 21930
+Kilburn High
+Rd
+09/07/25 6h 07m Crime Hotspot 16243 0.64 11 11 0 0 0 0% 4 2 5 13635
+Rye Lane,
+Peckham
+09/07/25 3h 28m Crime Hotspot 16243 0.64 13 12 1 0 0 0% 9 0 3 9315
+Station
+Parade,
+Barking
+11/07/25 5h 53m Crime Hotspot 16265 0.64 8 8 0 0 0 0% 3 1 4 15225
+Coventry St,
+Westminster
+11/07/25 2h 26m Crime Hotspot 16265 0.64 7 7 0 0 0 0% 6 1 0 17415
+High St,
+Lewisham
+15/07/25 5h 00m Crime Hotspot 16298 0.64 12 12 0 0 0 0% 8 2 2 12615
+King St,
+Hammersmith
+15/07/25 4h 10m Crime Hotspot 16298 0.64 12 12 0 0 0 0% 7 0 5 16285
+Wembley
+Central
+17/07/25 6h 19m Crime Hotspot 16261 0.64 9 9 0 0 0 0% 4 1 4 17015
+Leicester Sq 17/07/25 4h 46m Crime Hotspot 16261 0.64 7 7 0 0 0 0% 4 2 1 32690
+Romford 23/07/25 6h 00m Crime Hotspot 16295 0.64 11 11 0 0 0 0% 3 1 7 29930
+Praed St,
+Paddington
+23/07/25 8h 34m Crime Hotspot 16295 0.64 8 8 0 0 0 0% 5 0 3 25295
+Camden 25/07/25 3h 50m Crime Hotspot 16315 0.64 2 2 0 0 0 0% 0 0 2 9455
+Piccadilly,
+Hard Rock
+25/07/25 1h 31m Crime Hotspot 16315 0.64 4 4 0 0 0 0% 4 0 0 7490
+Woolwich 29/07/25 6h 05m Crime Hotspot 16366 0.64 11 11 0 0 0 0% 6 0 5 21080
+Dagenham 29/07/25 5h 56m Crime Hotspot 16366 0.64 5 5 0 0 0 0% 3 1 1 9455
+London Bridge 31/07/25 6h 11m Crime Hotspot 16416 0.64 7 6 1 0 0 0% 3 0 3 31365
+Ilford, High Rd 31/07/25 6h 03m Crime Hotspot 16416 0.64 14 14 0 0 0 0% 3 2 9 18695
+Shepherds
+Bush Green
+05/08/25 6h 04m Crime Hotspot 16310 0.64 6 6 0 0 0 0% 2 1 3 19605
+Green Street,
+Newham
+05/08/25 6h 33m Crime Hotspot 16310 0.64 10 10 0 0 0 0% 9 0 1 24150
+Oxford Circus 07/08/25 4h 14m Crime Hotspot 16346 0.64 7 7 0 0 0 0% 5 0 2 31640
+Walworth Rd,
+Southwark
+07/08/25 6h 07m Crime Hotspot 16346 0.64 7 7 0 0 0 0% 4 0 3 13785
+Brixton Rd,
+Brixton
+12/08/25 5h 21m Crime Hotspot 16401 0.64 23 23 0 0 0 0% 16 0 7 19095
+Bond St Stn 12/08/25 6h 18m Crime Hotspot 16401 0.64 5 4 0 1 0 0.002% 1 1 3 33780
+Stratford,
+Westfields
+15/08/25 5h 18m Crime Hotspot 16488 0.64 17 17 0 0 0 0% 9 1 7 31774
+Clarence St,
+Kingston
+15/08/25 6h 18m Crime Hotspot 16488 0.64 9 9 0 0 0 0% 3 2 4 26460
+Peckham Rye 19/08/25 5h 57m Crime Hotspot 16518 0.64 12 12 0 0 0 0% 7 0 5 18015
+Victoria St 19/08/25 5h 25m Crime Hotspot 16518 0.64 6 6 0 0 0 0% 4 0 2 14505
+Stratford
+B’way
+21/08/25 6h 24m Crime Hotspot 16563 0.64 9 8 1 0 0 0% 1 1 6 18270
+Coventry St,
+Westminster
+21/08/25 4h 45m Crime Hotspot 16563 0.64 12 11 1 0 0 0% 4 1 6 25050
+Kilburn Lane 24/08/25 7h 38m Event PSO 16231 0.64 33 31 1 1 0 0.002% 23 1 7 46848
+Paddington
+Stn
+24/08/25 7h 46m Event PSO 16231 0.64 6 6 0 0 0 0% 4 1 1 16380
+Kilburn Lane 25/08/25 9hr 39m Event PSO 16179 0.64 41 41 0 0 0 0% 24 0 17 51221
+Paddington
+Stn
+25/08/25 9hr 44m Event PSO 16179 0.64 18 17 0 1 0 0.0009% 10 1 7 51220
+Tooting
+Broadway
+27/08/25 6h 14m Crime Hotspot 16363 0.64 15 15 0 0 0 0% 7 2 6 22180
+Hounslow
+High St
+27/08/25 6h 08m Crime Hotspot 16363 0.64 13 13 0 0 0 0% 6 4 3 23505
+Ealing
+Broadway
+29/08/25 6h 02m Crime Hotspot 16142 0.64 12 12 0 0 0 0% 2 3 7 19230
+Walthamstow
+Central
+29/08/25 6h 13m Crime Hotspot 16142 0.64 14 14 0 0 0 0% 10 0 4 23610
+Walworth Rd 02/09/25 6h 09m Crime Hotspot 16173 0.64 8 8 0 0 0 0% 5 2 1 19515
+Bond St Stn 02/09/25 5h 42m Crime Hotspot 16173 0.64 12 11 1 0 0 0% 7 0 4 32140
+Edmonton
+Green
+04/09/25 5h 08m Crime Hotspot 16269 0.64 12 12 0 0 0 0% 6 0 6 16125
+Whitechapel 04/09/25 6h 22m Crime Hotspot 16270 0.64 15 15 0 0 0 0% 7 0 8 16900
+North End
+Croydon
+06/09/25 2h 51m Crime Hotspot 16324 0.64 11 10 1 0 0 0% 5 3 2 13680
+Finsbury Park 09/09/25 4h 05m Crime Hotspot 16535 0.64 10 9 1 0 0 0% 4 2 3 5835
+Dalston
+Kingsland
+09/09/25 3h 50m Crime Hotspot 16353 0.64 13 13 0 0 0 0% 9 0 4 13425
+High St,
+Lewisham
+12/09/25 4h 14m Crime Hotspot 16354 0.64 14 14 0 0 0 0% 9 3 2 10145
+Brixton Rd,
+Brixton
+12/09/25 7h 31m Crime Hotspot 16353 0.64 32 31 0 1 0 0.002% 14 3 15 35280
+Ilford High St 16/09/25 6h 08m Crime Hotspot 16474 0.64 12 11 0 1 0 0.003% 4 0 8 26805
+Bethnal Green
+Road
+16/09/25 4h 53m Crime Hotspot 16475 0.64 7 7 0 0 0 0% 3 1 3 9150
+Powis St,
+Woolwich
+18/09/25 5h 36m Crime Hotspot 16420 0.64 10 10 0 0 0 0% 8 0 2 22760
+High Rd,
+Wood Green
+18/09/25 5h 25m Crime Hotspot 16422 0.64 17 15 2 0 0 0% 6 1 8 11660
+Oxford Circus 24/09/25 5h 04m Crime Hotspot 16617 0.64 10 10 0 0 0 0% 3 2 5 44160
+South St,
+Romford
+24/09/25 5h 04m Crime Hotspot 16617 0.64 8 8 0 0 0 0% 1 3 4 13870
+Station
+Parade,
+Barking
+26/09/25 4h 25m Crime Hotspot 16680 0.64 10 10 0 0 0 0% 5 2 3 18525
+Piccadilly
+Circus
+26/09/25 4h 29m Crime Hotspot 16680 0.64 2 0 0 0 0 0% 1 0 1 22710
+Edgware Rd 30/09/25 5h 59m Crime Hotspot 16547 0.64 11 11 0 0 0 0% 5 2 4 7575
+Seven Sisters
+Rd
+30/09/25 5h 49m Crime Hotspot 16547 0.64 6 6 0 0 0 0% 1 0 5 8460
+North End
+Croydon
+01/10/25 4h 40m Crime Hotspot 15934 0.64 18 18 0 0 0 0% 9 4 5 23521
+Oxford Circus 02/10/25 5h 27m Crime Hotspot 15943 0.64 8 8 0 0 0 0% 4 1 3 47659
+Stratford
+B’way
+02/10/25 5h 47m Crime Hotspot 15943 0.64 11 11 0 0 0 0% 4 1 6 30795
+North End
+Croydon
+07/10/25 4h 22m Crime Hotspot 16528 0.64 20 19 1 0 0 0% 8 1 10 15036
+Walworth Rd 08/10/25 5h 09m Crime Hotspot 16529 0.64 14 14 0 0 0 0% 7 3 4 15035
+Piccadilly
+Circus
+08/10/25 6h 48m Crime Hotspot 16539 0.64 10 9 1 0 0 0% 4 0 5 28150
+Green St,
+Upton Pk
+10/10/25 5h 55m Crime Hotspot 15969 0.64 4 4 0 0 0 0% 2 0 2 21750
+Rye Lane,
+Peckham
+10/10/25 5h 54m Crime Hotspot 15934 0.64 8 8 0 0 0 0% 4 0 4 19905
+East Ham,
+High Road
+North
+14/10/25 5h 06m Crime Hotspot 16623 0.64 9 9 0 0 0 0% 7 0 2 20385
+Marble Arch 14/10/25 5h 29m Crime Hotspot 16594 0.64 10 10 0 0 0 0% 4 2 4 18780
+North End
+Croydon
+15/10/25 4h 12m Crime Hotspot 16186 0.64 22 22 0 0 0 0% 14 2 6 35134
+Brixton Road 16/10/25 4h 33m Crime Hotspot 16631 0.64 24 24 0 0 0 0% 13 3 8 27840
+Hatton
+Garden
+16/10/25 4 h 40m Crime Hotspot 16626 0.64 4 4 0 0 0 0% 4 0 0 13190
+Hammersmith
+Broadway
+21/10/25 3h 38m Crime Hotspot 16540 0.64 17 16 1 0 0 0% 8 2 6 14461
+Harlesden 21/10/25 5h 08m Crime Hotspot 16529 0.64 9 9 0 0 0 0% 4 2 3 5775
+Tottenham
+Court Rd
+24/10/25 4h 47m Crime Hotspot 16553 0.64 10 9 1 0 0 0% 8 1 0 23190
+Wembley
+Central
+24/10/25 6h 12m Crime Hotspot 16546 0.64 13 13 0 0 0 0% 4 2 7 22680
+Walthamstow
+Central
+28/10/25 4h 17m Crime Hotspot 16585 0.64 3 3 0 0 0 0% 1 0 2 18700
+Paddington
+Stn
+28/10/25 5h 09m Crime Hotspot 16542 0.64 4 4 0 0 0 0% 2 2 0 12405
+North End,
+Croydon
+29/10/25 5h 47m Crime Hotspot 16595 0.64 13 13 0 0 0 0% 6 2 5 9205
+Kilburn High
+Rd
+30/10/25 5h 05m Crime Hotspot 16601 0.64 9 9 0 0 0 0% 5 0 4 6770
+Leicester Sq 30/10/25 4h 13m Crime Hotspot 16608 0.64 8 7 1 0 0 0% 4 0 3 34110
+Wood Green 05/11/25 4h 12m Crime Hotspot 16583 0.64 3 3 0 0 0 0% 0 0 3 12780
+London Rd,
+Morden
+05/11/25 6h 09m Crime Hotspot 16598 0.64 7 6 1 0 0 0% 1 0 5 11895
+North End,
+Croydon
+06/11/25 4h 13m Crime Hotspot 16570 0.64 10 10 0 0 0 0% 6 0 4 13218
+Edgware Rd 07/11/25 6h 35m Crime Hotspot 16680 0.64 6 6 0 0 0 0% 5 0 1 14580
+Upton Park 07/11/25 4h 56m Crime Hotspot 16696 0.64 10 9 1 0 0 0% 6 1 2 18455
+Bruce Grove,
+Tottenham
+11/11/25 4h 49m Crime Hotspot 16779 0.64 14 13 1 0 0 0% 6 0 7 12780
+Tooting
+Broadway
+11/11/25 5h 54m Crime Hotspot 16748 0.64 10 9 1 0 0 0% 4 1 4 24425
+Sutton High St 13/11/25 4h 38m Crime Hotspot 16773 0.64 5 5 0 0 0 0% 3 0 2 8850
+Southall 13/11/25 5h 08m Crime Hotspot 16760 0.64 4 3 1 0 0 0% 1 0 2 13050
+North End,
+Croydon
+14/11/25 1h 45m Crime Hotspot 16798 0.64 10 10 0 0 0 0% 8 1 1 6185
+Edmonton
+Green
+18/11/25 6h 09m Crime Hotspot 16827 0.64 14 13 1 0 0 0% 6 3 5 18075
+Clarence St,
+Kingston
+18/11/25 4h 39m Crime Hotspot 16795 0.64 8 8 0 0 0 0% 4 2 2 17225
+North End,
+Croydon
+19/11/25 5h 51m Crime Hotspot 16835 0.64 26 25 1 0 0 0% 7 6 12 27456
+Piccadilly,
+Hard Rock
+20/11/25 4h 35m Crime Hotspot 16830 0.64 3 3 0 0 0 0% 0 0 3 14805
+Walthamstow 20/11/25 1h 47m Crime Hotspot 16870 0.64 7 7 0 0 0 0% 6 0 1 4435
+North End,
+Croydon
+21/11/25 4h 08m Crime Hotspot 16807 0.64 13 12 1 0 0 0% 7 0 5 17242
+Hornsey Road 23/11/25 2h 25m Event - PSO 16528 0.64 1 1 0 0 0 0% 0 0 1 8435
+Holloway
+Road
+23/11/25 1h 58m Event - PSO 16528 0.64 2 2 0 0 0 0% 1 0 1 9849
+Richmond 25/11/25 6h 09m Crime Hotspot 16583 0.64 8 8 0 0 0 0% 3 0 5 17585
+High Street,
+Hounslow
+25/11/25 5h 37m Crime Hotspot 16591 0.64 7 7 0 0 0 0% 2 0 5 19465
+North End
+Croydon
+26/11/25 3h 21m Crime Hotspot 16294 0.64 14 12 2 0 0 0% 7 2 3 16494
+T2 Heathrow
+Airport
+27/11/25 5h 14m CNI PSO 16856 0.64 1 1 0 0 0 0% 0 0 1 7455
+Westfield,
+White City
+28/11/25 6h 02m Crime Hotspot 16732 0.64 8 8 0 0 0 0% 4 0 4 38125
+Westfield,
+Stratford
+28/11/25 5h 42m Crime Hotspot 16762 0.64 12 12 0 0 0 0% 6 3 3 46185
+Walthamstow
+Market
+01/12/25 5h 20m Crime Hotspot 16732 0.64 8 7 0 0 0 0% 1 3 3 20414
+Tottenham
+Court Rd
+01/12/25 5h 45m Crime Hotspot 16812 0.64 5 5 0 0 0 0% 3 0 2 33520
+Powis St,
+Woolwich
+03/12/25 4h 48m Crime Hotspot 16786 0.64 13 12 1 0 0 0% 5 2 6 19440
+Upton Park 03/12/25 3h 53m Crime Hotspot 16819 0.64 7 6 1 0 0 0% 4 1 1 8640
+North End,
+Croydon
+04/12/25 5h 14m Crime Hotspot 16775 0.64 10 10 0 0 0 0% 3 3 4 16611
+Bond St Stn 05/12/25 4h 55m Crime Hotspot 16752 0.64 6 5 1 0 0 0% 5 0 0 56843
+Whitechapel 05/12/25 4h 26m Crime Hotspot 16761 0.64 12 12 0 0 0 0% 2 0 10 11690
+Rye Lane,
+Peckham
+09/12/25 3h 42m Crime Hotspot 16768 0.64 6 6 0 0 0 0% 3 1 2 10447
+Covent
+Garden
+09/12/25 5h 04m Crime Hotspot 16766 0.64 2 2 0 0 0 0% 1 0 1 30350
+North End
+Croydon
+10/12/25 5h 22m Crime Hotspot 16725 0.64 14 13 1 0 0 0% 6 2 5 23842
+Leicester Sq 11/12/25 5h 36m Crime Hotspot 16808 0.64 7 7 0 0 0 0% 2 0 5 48780
+Mare St,
+Hackney
+11/12/25 4h 13m Crime Hotspot 16820 0.64 13 13 0 0 0 0% 11 0 2 12055
+Tottenham
+Court Rd
+12/12/25 1h 52m Crime Hotspot 16809 0.64 6 6 0 0 0 0% 5 0 1 19395
+Leicester Sq 15/12/25 5h 23m Crime Hotspot 16804 0.64 5 5 0 0 0 0% 2 1 2 42096
+South Bank 15/12/25 3h 56m Crime Hotspot 16808 0.64 2 2 0 0 0 0% 0 0 2 18765
+Brixton Rd 17/12/25 6h 18m Crime Hotspot 16828 0.64 27 26 1 0 0 0% 12 4 10 31245
+Oxford Circus 17/12/25 4h 32m Crime Hotspot 16826 0.64 11 11 0 0 0 0% 7 1 3 55495
+North End,
+Croydon
+18/12/25 1h 43m Crime Hotspot 16769 0.64 4 4 0 0 0 0% 3 0 1 6282
+Dalston
+Junction
+19/12/25 3h 22m Crime Hotspot 16857 0.64 13 13 0 0 0 0% 10 0 3 15465
+Knightsbridge 19/12/25 5h 12m Crime Hotspot 16841 0.64 4 3 1 0 0 0% 3 0 0 33750
+Lewisham
+High St
+23/12/25 4h 09m Crime Hotspot 16837 0.64 11 11 0 0 0 0% 2 3 6 12675
+High St North,
+East Ham
+23/12/25 4h 23m Crime Hotspot 16883 0.64 9 9 0 0 0 0% 7 0 2 15105
