@@ -2,6 +2,8 @@ import './style.css'
 import p5 from 'p5'
 import Papa from 'papaparse'
 
+const area = [[51.35, 51.65], [-0.47, 0.23]]
+
 const canvas = document.getElementById('canvas')
 
 const loadCSV = (path) =>
@@ -31,8 +33,8 @@ const sketch = (p) => {
         const lat = parseFloat(locationInfo['latitude'])
         const lng = parseFloat(locationInfo['longitude'])
 
-        const canvasX = p.map(lng, -0.55, 0.35, 0, p.width)
-        const canvasY = p.map(lat, 51.28, 51.70, p.height, 0)
+        const canvasX = p.map(lng, area[1][0], area[1][1], 0, p.width)
+        const canvasY = p.map(lat, area[0][0], area[0][1], p.height, 0)
 
         p.fill(255, 0, 0)
         p.noStroke()
