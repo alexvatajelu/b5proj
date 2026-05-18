@@ -7,7 +7,11 @@ const maxLat = 51.65;
 const minLon = -0.47;
 const maxLon = 0.23;
 
-const ZOOM = 11;
+let ZOOM = 11;
+
+let gMinX, gMaxX, gMinY, gMaxY;
+let canvasW, canvasH;
+let tileMinX, tileMaxX, tileMinY, tileMaxY;
 
 function lonToPixelX(lon, z) {
   return ((lon + 180) / 360) * Math.pow(2, z) * 256;
@@ -17,18 +21,23 @@ function latToPixelY(lat, z) {
   return ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * Math.pow(2, z) * 256;
 }
 
-const gMinX = lonToPixelX(minLon, ZOOM);
-const gMaxX = lonToPixelX(maxLon, ZOOM);
-const gMinY = latToPixelY(maxLat, ZOOM);
-const gMaxY = latToPixelY(minLat, ZOOM);
+function tileize() {
 
-const canvasW = Math.round(gMaxX - gMinX);
-const canvasH = Math.round(gMaxY - gMinY);
+   gMinX = lonToPixelX(minLon, ZOOM);
+   gMaxX = lonToPixelX(maxLon, ZOOM);
+   gMinY = latToPixelY(maxLat, ZOOM);
+   gMaxY = latToPixelY(minLat, ZOOM);
 
-const tileMinX = Math.floor(gMinX / 256);
-const tileMaxX = Math.floor(gMaxX / 256);
-const tileMinY = Math.floor(gMinY / 256);
-const tileMaxY = Math.floor(gMaxY / 256);
+   canvasW = Math.round(gMaxX - gMinX);
+   canvasH = Math.round(gMaxY - gMinY);
+
+   tileMinX = Math.floor(gMinX / 256);
+   tileMaxX = Math.floor(gMaxX / 256);
+   tileMinY = Math.floor(gMinY / 256);
+   tileMaxY = Math.floor(gMaxY / 256);
+
+}
+tileize();
 
 const canvas = document.getElementById('canvas');
 
@@ -37,6 +46,10 @@ const loadCSV = (path) =>
     .then(r => r.text())
     .then(text => Papa.parse(text, { header: true, skipEmptyLines: true }).data);
 
+
+
+
+    
 const sketch = (p) => {
   let lfrData, locationsLookup;
   const tileImages = {};
@@ -80,13 +93,7 @@ const sketch = (p) => {
       drawLocations(lfrData, locationsLookup);
     }
 
-    p.fill(255, 255, 255, 100);
-    p.noStroke();
-    p.rect(0, canvasH - 18, 185, 18);
-    p.fill(0);
-    p.textSize(10);
-    p.textAlign(p.LEFT, p.BOTTOM);
-    p.text('© OpenStreetMap contributors', 4, canvasH - 3);
+
   };
 
   const drawLocations = (lfr, lookup) => {
@@ -111,6 +118,21 @@ const sketch = (p) => {
     locationsLookup = locations;
     p.redraw();
   };
+
+  
+  p.keyPressed = () => {
+    if (p.key === "]") {
+      ZOOM = Math.min(ZOOM + 1, 14);
+      
+    } else if (p.key === "[") {
+      ZOOM = Math.max(ZOOM - 1, 9);
+    }
+    if (p.key === "[" || p.key === "]") {
+      tileize();
+      p.setup();
+      console.log("Zoom level:", ZOOM);
+    }
+  }
 };
 
 Promise.all([
@@ -120,3 +142,15 @@ Promise.all([
   const mySketch = new p5(sketch, canvas);
   mySketch.setData(lfr, locations);
 });
+
+
+/*
+canvas.onKeyPressed = (e) => {
+  if (e.key === "]") {
+    ZOOM = Math.min(ZOOM + 1, 19);
+  } else if (e.key === "[") {
+    ZOOM = Math.max(ZOOM - 1, 11);
+  }
+  console.log("Zoom level:", ZOOM);
+}
+*/
