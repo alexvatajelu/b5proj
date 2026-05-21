@@ -8,6 +8,10 @@ const CWidth = window.innerWidth;
 const CHeight = window.innerHeight;
 
 const mapScale = 0.01;
+const LatLonCen = [51.50, -0.12];
+const LatLonGridSize = [0.02, 0.04];
+
+const markerSize = 30;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, CWidth / CHeight, 0.1, 100000);
@@ -26,15 +30,10 @@ const overheadLight = new THREE.DirectionalLight(0xffffff, 10);
 overheadLight.position.set(0, 40, 0);
 scene.add(overheadLight);
 
-const testGeo = new THREE.BoxGeometry(1, 1, 1);
-const testMat = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-const testMesh = new THREE.Mesh(testGeo, testMat);
-testMesh.position.y = 3;
-scene.add(testMesh);
 
 const map1Loader = new FBXLoader();
-const map1Mesh = await map1Loader.loadAsync('src/assets/scaled2cubemap.fbx');
-//const map1Mesh = await map1Loader.loadAsync('src/assets/same unedit.fbx');
+//const map1Mesh = await map1Loader.loadAsync('src/assets/scaled2cubemap.fbx');
+const map1Mesh = await map1Loader.loadAsync('src/assets/same unedit.fbx');
 const map1WFMat = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
 const map1Mat = new THREE.MeshStandardMaterial({ color: 0x0000ff, wireframe: false });
 map1Mesh.traverse((child) => {
@@ -47,6 +46,7 @@ scene.add(map1Mesh);
 
 //marker start
 
+// marker space is LatLonCen to LatLonCen + LatLonGridSize, scale 1 unit is 1 metre
 
 const markerBaseColHex = 0xffffff;
 const markerSelectedColHex = 0xffff00;
@@ -59,7 +59,7 @@ const mouse = new THREE.Vector2();
 let hoveredMarker = null;
 const tooltip = document.getElementById('tooltip');
 
-const markerGeometry = new THREE.SphereGeometry(10, 10, 10);
+const markerGeometry = new THREE.SphereGeometry(markerSize, markerSize, markerSize);
 const markerMaterial = new THREE.MeshStandardMaterial({ color: markerBaseColHex, emissive: 0x000000 });
 
 function formatTooltipData(info) {
@@ -113,16 +113,21 @@ async function loadLocationMarkers() {
   const nodes = data.elements.filter((element) => element.type === 'node');
   if (nodes.length === 0) return;
 
-  const centerLon = nodes.reduce((sum, node) => sum + node.lon, 0) / nodes.length;
-  const centerLat = nodes.reduce((sum, node) => sum + node.lat, 0) / nodes.length;
-  const lonScale = 111320;
-  const latScale = 110540;
+  // Use your defined map centre, NOT the average of nodes
+  const centerLat = LatLonCen[0] + (LatLonGridSize[0] / 2);
+  const centerLon = LatLonCen[1] + (LatLonGridSize[1] / 2);
+
+  const latScale = 110540;                                          // metres per degree latitude
+  const lonScale = 111320 * Math.cos(centerLat * Math.PI / 180);  // metres per degree longitude (adjusted for latitude)
 
   for (const node of nodes) {
     const marker = new THREE.Mesh(markerGeometry, markerMaterial.clone());
+
+    // Convert lat/lon offset to metres, then apply the same mapScale as the FBX
     marker.position.x = (node.lon - centerLon) * lonScale;
     marker.position.z = (centerLat - node.lat) * latScale;
     marker.position.y = 10;
+
     marker.userData = {
       id: node.id,
       type: node.type,
@@ -156,8 +161,9 @@ const OrbitControl = new OrbitControls(camera, renderer.domElement);
 function animate() {
     requestAnimationFrame(animate);
 
-    testMesh.rotation.x += 0.01;
-    testMesh.rotation.y += 0.01;
+    floorMesh.position.x = camera.position.x;
+    floorMesh.position.z = camera.position.z;
+
     OrbitControl.update();
     renderer.render(scene, camera);
 }

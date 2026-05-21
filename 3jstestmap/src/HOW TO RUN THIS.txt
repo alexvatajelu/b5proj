@@ -1,0 +1,31 @@
+
+how to run this on your computer, using node js
+
+
+step 1, check you have node js installed
+open terminal, run:
+    npm --version
+
+if you see a version number, npm is installed
+if not, download from internet / ual self serve, restart vs code, and try above again
+
+
+step 2, go to this project
+in terminal, type:
+    cd 3jstestmap
+to go the the project directory
+
+
+step 3, install all packages
+in terminal, run:
+    npm install
+
+
+step 4, run server
+in terminal, run:
+    npm run dev
+
+also, you can quit, pressing q and enter at the same time
+an restart with npm run dev again
+
+
