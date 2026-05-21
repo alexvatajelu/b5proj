@@ -1,0 +1,422 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-05-21T02:12:24Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 26659113,
+  "lat": 51.5175867,
+  "lon": -0.1087596,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "60",
+    "addr:postcode": "EC4A 1AA",
+    "addr:street": "Fetter Lane",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2025-08-06",
+    "fhrs:id": "294529",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 06:00-23:00, Sa 07:00-23:00, Su 09:00-23:00",
+    "operator": "Sainsbury's",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4036/fetter-lane-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 295975600,
+  "lat": 51.5126526,
+  "lon": -0.0874977,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "14",
+    "addr:postcode": "EC3V 9AN",
+    "addr:street": "Lombard Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "fhrs:id": "294551",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 06:00-22:00; Sa,Su 08:00-18:00",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4165/lombard-street-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 587743078,
+  "lat": 51.5028838,
+  "lon": -0.1074550,
+  "tags": {
+    "addr:housenumber": "55",
+    "addr:street": "The Cut",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Su 07:00-23:00",
+    "payment:american_express": "yes",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4250/lambeth-the-cut-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 587754846,
+  "lat": 51.5009487,
+  "lon": -0.1128416,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "112-113",
+    "addr:postcode": "SE1 7AE",
+    "addr:street": "Lower Marsh",
+    "brand": "Iceland",
+    "brand:wikidata": "Q721810",
+    "brand:wikipedia": "en:Iceland (supermarket)",
+    "contact:website": "https://www.iceland.co.uk/store-finder/store?StoreID=31&StoreName=LOWER%20MARSH",
+    "fhrs:id": "484300",
+    "name": "Iceland",
+    "opening_hours": "Mo-Sa 08:00-20:00; Su 11:00-17:00",
+    "shop": "frozen_food",
+    "source:addr": "FHRS Open Data",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 833668418,
+  "lat": 51.5125291,
+  "lon": -0.1040204,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "31",
+    "addr:postcode": "EC4V 6BJ",
+    "addr:street": "New Bridge Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2026-01-09",
+    "fhrs:id": "775591",
+    "fhrs:local_authority_id": "PI/000113141",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 07:00-23:00; Sa,Su 08:00-19:00",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4569/the-city-blackfriars-station-local"
+  }
+},
+{
+  "type": "node",
+  "id": 2489364566,
+  "lat": 51.5121671,
+  "lon": -0.0942146,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "63",
+    "addr:postcode": "EC4N 4UA",
+    "addr:street": "Queen Victoria Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "contact:website": "https://stores.sainsburys.co.uk/4204/the-city-mansion-house-station-local",
+    "fhrs:id": "582622",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 06:00-21:30; Sa 08:00-19:30; Su 09:00-19:00",
+    "operator": "Sainsbury's Supermarkets Ltd.",
+    "phone": "+44 20 7248 1796",
+    "shop": "convenience",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 2667699724,
+  "lat": 51.5193840,
+  "lon": -0.1057670,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "17-23",
+    "addr:postcode": "EC1M 3HA",
+    "addr:street": "Farringdon Road",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "fhrs:id": "425227",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Sa 07:00-23:00; Su 08:00-22:00",
+    "shop": "convenience",
+    "source:addr": "FSA Food Hygiene Rating Scheme open data",
+    "website": "https://stores.sainsburys.co.uk/4104/farringdon-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3399173299,
+  "lat": 51.5030257,
+  "lon": -0.1105730,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "101",
+    "addr:postcode": "SE1 8UL",
+    "addr:street": "Waterloo Road",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2025-07-11",
+    "fhrs:id": "483047",
+    "level": "0",
+    "name": "Sainsbury's Local",
+    "opening_hours": "24/7",
+    "operator": "Sainsbury's Supermarkets Ltd",
+    "payment:american_express": "yes",
+    "phone": "+44 20 7401 3823",
+    "shop": "convenience",
+    "source:addr": "FHRS Open Data",
+    "source_1": "receipt from visit",
+    "website": "https://stores.sainsburys.co.uk/4073/waterloo-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4087798583,
+  "lat": 51.5016512,
+  "lon": -0.1043512,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "157-168",
+    "addr:postcode": "SE1 8EZ",
+    "addr:street": "Blackfriars Road",
+    "branch": "Waterloo Blackfriars Road Local",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2025-07-10",
+    "fhrs:id": "635611",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Su 07:00-23:00",
+    "operator": "Sainsbury's",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4337/waterloo-blackfriars-road-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4559217310,
+  "lat": 51.5179799,
+  "lon": -0.1085072,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "123",
+    "addr:postcode": "EC1N 2TD",
+    "addr:street": "Holborn",
+    "branch": "Holborn Circus Local",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2025-08-06",
+    "contact:phone": "+44 20 7441 1230",
+    "contact:website": "https://stores.sainsburys.co.uk/6123/holborn-circus-local",
+    "fhrs:id": "836649",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Sa 07:00-19:00",
+    "ref": "6123",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 4820061721,
+  "lat": 51.5028820,
+  "lon": -0.0921817,
+  "tags": {
+    "addr:housenumber": "116-118",
+    "addr:street": "Borough High Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2026-02-26",
+    "check_date:opening_hours": "2026-02-26",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Sa 07:00-00:00; Su 12:00-18:00",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4055/borough-high-street-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 11239922500,
+  "lat": 51.5052615,
+  "lon": -0.1013444,
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "18",
+    "addr:postcode": "SE1 0UG",
+    "addr:street": "Great Suffolk Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date:opening_hours": "2025-06-17",
+    "contact:facebook": "sirorezka@gmail.com",
+    "fhrs:id": "654165",
+    "name": "Sainsbury's Local",
+    "opening_hours": "07:00-23:00",
+    "phone": "+44 20 7261 9828",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4272/london-great-suffolk-street-local",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 440100160,
+  "center": {
+    "lat": 51.5139909,
+    "lon": -0.1009000
+  },
+  "nodes": [
+    4378043823,
+    3340674787,
+    7613662837,
+    385707536,
+    385707537,
+    385707538,
+    748070874,
+    4378043824,
+    4378043823
+  ],
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "16-18",
+    "addr:postcode": "EC4M 7DR",
+    "addr:street": "Ludgate Hill",
+    "brand": "Sports Direct",
+    "brand:wikidata": "Q7579661",
+    "brand:wikipedia": "en:SportsDirect.com",
+    "level": "0",
+    "name": "Sports Direct",
+    "shop": "sports",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "way",
+  "id": 523485329,
+  "center": {
+    "lat": 51.5112060,
+    "lon": -0.0889722
+  },
+  "nodes": [
+    3582629695,
+    5096270653,
+    5096270655,
+    1678227114,
+    1678227213,
+    5096270652,
+    3582629695
+  ],
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "90A",
+    "addr:postcode": "EC4N 6HA",
+    "addr:street": "Cannon Street",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2023-03-12",
+    "contact:website": "https://stores.sainsburys.co.uk/4538/cannon-street-station-local",
+    "fhrs:id": "629359",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 07:00-23:00; Sa 08:00-19:00; Su 10:00-16:00",
+    "shop": "convenience",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 815659578,
+  "center": {
+    "lat": 51.5149211,
+    "lon": -0.0990651
+  },
+  "nodes": [
+    1837610905,
+    7617755255,
+    7617755252,
+    3613604700,
+    7617755261,
+    7617755260,
+    7617755259,
+    1837610905
+  ],
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "10",
+    "addr:postcode": "EC4M 7DX",
+    "addr:street": "Paternoster Square",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "fhrs:id": "294839",
+    "level": "0",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Su 07:00-23:00",
+    "operator": "Sainsbury's",
+    "phone": "+44 20 7200 8400",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4945/london-paternoster-square-local",
+    "wheelchair": "yes",
+    "wheelchair:description": "Wide step-free entrance."
+  }
+},
+{
+  "type": "way",
+  "id": 863432119,
+  "center": {
+    "lat": 51.5135797,
+    "lon": -0.0842635
+  },
+  "nodes": [
+    1778832184,
+    8043350289,
+    1312319843,
+    1535778603,
+    1778832183,
+    8043350291,
+    8043350290,
+    1778832184
+  ],
+  "tags": {
+    "addr:city": "London",
+    "addr:housenumber": "61",
+    "addr:postcode": "EC3V 3NH",
+    "addr:street": "Cornhill",
+    "brand": "Sainsbury's Local",
+    "brand:wikidata": "Q13218434",
+    "brand:wikipedia": "en:Sainsbury's Local",
+    "check_date": "2024-08-28",
+    "check_date:opening_hours": "2023-04-07",
+    "fhrs:id": "294913",
+    "fixme": "FHRS have 62-63 Cornhill",
+    "name": "Sainsbury's Local",
+    "opening_hours": "Mo-Fr 06:00-21:00; Sa-Su 08:00-18:00",
+    "shop": "convenience",
+    "website": "https://stores.sainsburys.co.uk/4889/london-cornhill-local",
+    "wheelchair": "yes"
+  }
+}
+
+  ]
+}
