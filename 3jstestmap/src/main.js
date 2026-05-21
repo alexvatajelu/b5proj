@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 const CWidth = window.innerWidth;
 const CHeight = window.innerHeight;
 
-const mapScale = 0.05;
+const mapScale = 0.01;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, CWidth / CHeight, 0.1, 100000);
@@ -33,7 +33,8 @@ testMesh.position.y = 3;
 scene.add(testMesh);
 
 const map1Loader = new FBXLoader();
-const map1Mesh = await map1Loader.loadAsync('src/assets/same unedit.fbx');
+const map1Mesh = await map1Loader.loadAsync('src/assets/scaled2cubemap.fbx');
+//const map1Mesh = await map1Loader.loadAsync('src/assets/same unedit.fbx');
 const map1WFMat = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
 const map1Mat = new THREE.MeshStandardMaterial({ color: 0x0000ff, wireframe: false });
 map1Mesh.traverse((child) => {
@@ -45,6 +46,7 @@ map1Mesh.scale.set(mapScale, mapScale, mapScale);
 scene.add(map1Mesh);
 
 //marker start
+
 
 const markerBaseColHex = 0xffffff;
 const markerSelectedColHex = 0xffff00;
@@ -113,8 +115,8 @@ async function loadLocationMarkers() {
 
   const centerLon = nodes.reduce((sum, node) => sum + node.lon, 0) / nodes.length;
   const centerLat = nodes.reduce((sum, node) => sum + node.lat, 0) / nodes.length;
-  const lonScale = 111320 * 0.5;
-  const latScale = 110540 * 0.5;
+  const lonScale = 111320;
+  const latScale = 110540;
 
   for (const node of nodes) {
     const marker = new THREE.Mesh(markerGeometry, markerMaterial.clone());
@@ -134,6 +136,8 @@ async function loadLocationMarkers() {
 
 await loadLocationMarkers();
 
+
+
 //marker end
 
 const floorGeo = new THREE.PlaneGeometry(10000, 10000);
@@ -142,6 +146,10 @@ const floorMesh = new THREE.Mesh(floorGeo, floorMat);
 floorMesh.rotation.x = -Math.PI / 2;
 floorMesh.position.y = -0.01;
 scene.add(floorMesh);
+
+const gridHelper = new THREE.GridHelper( 1000, 1000 );
+gridHelper.position.y = 10;
+scene.add( gridHelper );
 
 const OrbitControl = new OrbitControls(camera, renderer.domElement);
 
