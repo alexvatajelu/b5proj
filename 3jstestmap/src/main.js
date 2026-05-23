@@ -35,11 +35,12 @@ class Tiles {
         newTile(0, 0);
     }
     newTile(x, y) {
-        
-        let t = new Tile(lat, lon)
+        let lat, lon = xy2latlon (x, y);
+        let t = new Tile(lat, lon);
+        this.tiles.push(t);
     }
-
     xy2latlon(x, y) {
+        // SCALE TO BE ADDED
         let lat = ORIGIN.lat + x * TILESIZE.lat;
         let lon = ORIGIN.lon + x * TILESIZE.lon;
         return (lat, lon);
