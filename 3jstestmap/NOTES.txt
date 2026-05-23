@@ -1,0 +1,28 @@
+
+
+
+belnmod.js:
+
+first try with blender blosm to load tile of ~5km^2
+works, including lat/long to three js units as metres
+also, overpass api (hardcoded local fetch here) poi, locations synced
+
+plans - need to get live data as tiles
+tile manager to fetch/dispose tiles currently in view
+server to hold/generate tile data?
+
+
+tilesmaybepoc.js + tilemanagerpoc.js:
+claude ai proof of concept
+to test fetching tiles, it is possible and works, however limited so server would be very good
+
+THIS IS NOT TO BE USED !!! NOT HUMAN CODED !!! PROOF OF CONCEPT
+
+
+
+
+current main.js:
+
+trying to make tile system
+
+

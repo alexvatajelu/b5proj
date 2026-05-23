@@ -29,3 +29,5 @@ also, you can quit, pressing q and enter at the same time
 an restart with npm run dev again
 
 
+
+also, see NOTES.txt for explanation on project development
