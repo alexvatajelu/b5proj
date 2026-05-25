@@ -1,4 +1,3 @@
-// server.js — place in project root, run with: node server.js
 
 import express from 'express';
 import cors    from 'cors';
@@ -8,35 +7,34 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ── Config ────────────────────────────────────────────────────────────────────
-
 const PORT      = 3000;
 const CACHE_DIR = path.join(__dirname, 'tile_cache');
-const MAX_TILES = 500;
+const MAX_TILES = 2000;
 
 const ORIGIN   = { lat: 51.505, lon: -0.09 };
 const TILE_DEG = 0.005;
 
-// Multiple mirrors — server tries each in order until one works
 const OVERPASS_MIRRORS = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ];
 
-const OVERPASS_DELAY_MS = 1200;  // gap between queued requests
-const OVERPASS_TIMEOUT  = 30_000;
+const OVERPASS_DELAY_MS  = 1200;
+const OVERPASS_TIMEOUT   = 30_000;
 
-// ── Setup ─────────────────────────────────────────────────────────────────────
+
+const MAX_QUEUE_SIZE     = 40;
+const DEFAULT_PRIORITY   = 5;
+
 
 const app = express();
 app.use(cors());
 
 await fs.mkdir(CACHE_DIR, { recursive: true });
 
-const pending = new Map();   // deduplication of in-flight fetches
+const pending = new Map();
 
-// ── Overpass serial queue ─────────────────────────────────────────────────────
 
 const q       = [];
 let   running = 0;
@@ -54,14 +52,32 @@ function scheduleNext() {
         });
 }
 
-function enqueue(fn) {
+/**
+ * @param {() => Promise<any>} fn
+ * @param {number}             priority
+ * @returns {Promise<any>}
+ */
+function enqueue(fn, priority = DEFAULT_PRIORITY) {
     return new Promise((resolve, reject) => {
-        q.push({ fn, resolve, reject });
+        const item = { fn, resolve, reject, priority };
+
+        let lo = 0, hi = q.length;
+        while (lo < hi) {
+            const mid = (lo + hi) >>> 1;
+            if (q[mid].priority <= item.priority) lo = mid + 1;
+            else hi = mid;
+        }
+        q.splice(lo, 0, item);
+
+        if (q.length > MAX_QUEUE_SIZE) {
+            const dropped = q.pop();
+            dropped.reject(new Error('Queue overflow — request dropped (low priority)'));
+            console.log(`[queue] overflow — dropped lowest-priority item (queue: ${q.length})`);
+        }
+
         scheduleNext();
     });
 }
-
-// ── Overpass fetch with mirror fallback ───────────────────────────────────────
 
 async function fetchOverpass(tx, ty) {
     const s    = ORIGIN.lat +  ty      * TILE_DEG;
@@ -79,7 +95,7 @@ async function fetchOverpass(tx, ty) {
             'Content-Type': 'application/x-www-form-urlencoded',
             'User-Agent':   'TileMapApp/1.0 (local dev)',
         },
-        signal:  AbortSignal.timeout(OVERPASS_TIMEOUT),
+        signal: AbortSignal.timeout(OVERPASS_TIMEOUT),
     };
 
     let lastErr;
@@ -101,8 +117,6 @@ async function fetchOverpass(tx, ty) {
     }
     throw lastErr ?? new Error('All Overpass mirrors failed');
 }
-
-// ── Cache helpers ─────────────────────────────────────────────────────────────
 
 const cf = (tx, ty) => path.join(CACHE_DIR, `${tx}_${ty}.json`);
 
@@ -144,20 +158,23 @@ async function evictLRU() {
     console.log(`[evict] removed ${excess.length} tile(s)`);
 }
 
-// ── Routes ────────────────────────────────────────────────────────────────────
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
-// Useful for debugging — hit this in your browser to check Overpass connectivity
 app.get('/test', async (_req, res) => {
     const results = [];
     for (const mirror of OVERPASS_MIRRORS) {
         try {
             const r = await fetch(mirror, {
                 method:  'POST',
-                body:    'data=' + encodeURIComponent('[out:json];node(51.505,-0.09,51.506,-0.089);out count;'),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'TileMapApp/1.0 (local dev)' },
-                signal:  AbortSignal.timeout(8000),
+                body:    'data=' + encodeURIComponent(
+                    '[out:json];node(51.505,-0.09,51.506,-0.089);out count;'
+                ),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent':   'TileMapApp/1.0 (local dev)',
+                },
+                signal: AbortSignal.timeout(8000),
             });
             results.push({ mirror, status: r.status, ok: r.ok });
         } catch (e) {
@@ -168,30 +185,29 @@ app.get('/test', async (_req, res) => {
 });
 
 app.get('/tile/:tx/:ty', async (req, res) => {
-    const tx  = parseInt(req.params.tx, 10);
-    const ty  = parseInt(req.params.ty, 10);
-    const key = `${tx},${ty}`;
+    const tx       = parseInt(req.params.tx, 10);
+    const ty       = parseInt(req.params.ty, 10);
+    const priority = Math.max(1, parseInt(req.query.priority ?? String(DEFAULT_PRIORITY), 10));
+    const key      = `${tx},${ty}`;
+
     if (isNaN(tx) || isNaN(ty))
         return res.status(400).json({ error: 'tx and ty must be integers' });
 
     try {
-        // 1 — cache hit
         const cached = await readCache(tx, ty);
         if (cached) {
             console.log(`[HIT ] (${tx},${ty})`);
-            touchCache(tx, ty, cached);   // fire-and-forget
+            touchCache(tx, ty, cached);
             return res.json(cached.data);
         }
 
-        // 2 — join in-flight request
         if (pending.has(key)) {
             console.log(`[WAIT] (${tx},${ty})`);
             return res.json(await pending.get(key));
         }
 
-        // 3 — enqueue Overpass fetch
-        console.log(`[MISS] (${tx},${ty})  queue: ${q.length} waiting`);
-        const promise = enqueue(() => fetchOverpass(tx, ty));
+        console.log(`[MISS] (${tx},${ty})  priority=${priority}  queue=${q.length} waiting`);
+        const promise = enqueue(() => fetchOverpass(tx, ty), priority);
         pending.set(key, promise);
 
         let data;
@@ -216,6 +232,7 @@ app.get('/stats', async (_req, res) => {
         maxTiles:     MAX_TILES,
         queueWaiting: q.length,
         queueRunning: running,
+        maxQueueSize: MAX_QUEUE_SIZE,
     });
 });
 
