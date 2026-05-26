@@ -60,6 +60,7 @@ controls.dampingFactor = 0.08;
 controls.minDistance   = 80;
 controls.maxDistance   = 3000;
 controls.minPolarAngle = 0;
+//controls.maxPolarAngle = 0;
 controls.maxPolarAngle = Math.PI / 2;
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.7));
@@ -216,7 +217,7 @@ class Tile {
 
         const placeholder = new THREE.Mesh(
             new THREE.PlaneGeometry(TILE_W - 2, TILE_H - 2),
-            new THREE.MeshBasicMaterial({ color: 0x334466, wireframe: true }),
+            new THREE.MeshBasicMaterial({ color: 0x2255cc, wireframe: true }),
         );
         placeholder.rotation.x = -Math.PI / 2;
         placeholder.position.set(cx, 0, cz);
@@ -237,8 +238,17 @@ class Tile {
                     if (m) this.group.add(m);
                 }
             }
+
+            this.group.remove(placeholder);
+            placeholder.geometry.dispose();
+            placeholder.material.dispose();
+
             this.loaded = true;
         } catch (e) {
+            this.group.remove(placeholder);
+            placeholder.geometry.dispose();
+            placeholder.material.dispose();
+
             if (e.name === 'AbortError') {
             } else {
                 console.warn(`Tile (${this.tx},${this.ty}) failed:`, e.message);
@@ -246,9 +256,6 @@ class Tile {
             }
         } finally {
             this.loading = false;
-            this.group.remove(placeholder);
-            placeholder.geometry.dispose();
-            placeholder.material.dispose();
         }
     }
 
