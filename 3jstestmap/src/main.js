@@ -2,7 +2,6 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-
 const ORIGIN   = { lat: 51.505, lon: -0.09 };
 const TILE_DEG = 0.005;
 const LAT_M    = 110540;
@@ -14,8 +13,9 @@ const RADIUS_MIN  = 1;
 const RADIUS_MAX  = 5;
 const HEIGHT_MIN  = 100;
 const HEIGHT_MAX  = 2500;
+const VIEW_BIAS     = 0.55;
 
-const VIEW_BIAS   = 0.55;
+const EVICT_BUFFER  = 1;
 
 const CONCURRENCY    = 3;
 const MAX_QUEUE      = 24;
@@ -25,7 +25,6 @@ const RETILE_MS   = 350;
 
 const SERVER = 'http://localhost:3000';
 let useServer = false;
-
 
 async function detectServer() {
     try {
@@ -40,7 +39,6 @@ async function detectServer() {
 }
 
 await detectServer();
-
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
@@ -77,7 +75,6 @@ ground.rotation.x = -Math.PI / 2;
 ground.position.y = -1;
 scene.add(ground);
 
-
 function tileLatLon(tx, ty) {
     return { lat: ORIGIN.lat + ty * TILE_DEG, lon: ORIGIN.lon + tx * TILE_DEG };
 }
@@ -93,13 +90,11 @@ function camTile() {
     };
 }
 
-
 function getLoadRadius() {
     const h = camera.position.y;
     const t = Math.min(1, Math.max(0, (h - HEIGHT_MIN) / (HEIGHT_MAX - HEIGHT_MIN)));
     return Math.round(RADIUS_MIN + t * (RADIUS_MAX - RADIUS_MIN));
 }
-
 
 const _lookDir = new THREE.Vector3();
 
@@ -118,7 +113,6 @@ function getViewBiasedCenter() {
         cy: ty - _lookDir.z * bias,
     };
 }
-
 
 function buildPriorityList() {
     const radius    = getLoadRadius();
@@ -140,10 +134,12 @@ function buildPriorityList() {
     return list;
 }
 
-
-async function fetchOSM(tx, ty, priority = 5) {
+async function fetchOSM(tx, ty, priority = 5, signal = null) {
     if (useServer) {
-        const res = await fetch(`${SERVER}/tile/${tx}/${ty}?priority=${priority}`);
+        const res = await fetch(
+            `${SERVER}/tile/${tx}/${ty}?priority=${priority}`,
+            signal ? { signal } : {},
+        );
         if (!res.ok) throw new Error(`Server HTTP ${res.status}`);
         return res.json();
     }
@@ -161,11 +157,11 @@ async function fetchOSM(tx, ty, priority = 5) {
         method:  'POST',
         body:    'data=' + encodeURIComponent(q),
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        signal:  signal ?? AbortSignal.timeout(25_000),
     });
     if (!res.ok) throw new Error(`Overpass HTTP ${res.status}`);
     return res.json();
 }
-
 
 function buildingMesh(way, nodeById) {
     const pts = (way.nodes || [])
@@ -202,11 +198,11 @@ class Tile {
         this.loaded  = false;
         this.failed  = false;
         this.group   = new THREE.Group();
+        this._abort  = new AbortController();
         scene.add(this.group);
     }
 
     get done() { return this.loaded || this.failed; }
-
 
     startLoad(priority = 5) {
         if (this.loading || this.done) return Promise.resolve();
@@ -227,7 +223,10 @@ class Tile {
         this.group.add(placeholder);
 
         try {
-            const data    = await fetchOSM(this.tx, this.ty, priority);
+            const data = await fetchOSM(this.tx, this.ty, priority, this._abort.signal);
+
+            if (this._abort.signal.aborted) return;
+
             const nodeMap = new Map();
             for (const el of data.elements) {
                 if (el.type === 'node') nodeMap.set(el.id, el);
@@ -240,8 +239,11 @@ class Tile {
             }
             this.loaded = true;
         } catch (e) {
-            console.warn(`Tile (${this.tx},${this.ty}) failed:`, e.message);
-            this.failed = true;
+            if (e.name === 'AbortError') {
+            } else {
+                console.warn(`Tile (${this.tx},${this.ty}) failed:`, e.message);
+                this.failed = true;
+            }
         } finally {
             this.loading = false;
             this.group.remove(placeholder);
@@ -251,6 +253,7 @@ class Tile {
     }
 
     dispose() {
+        this._abort.abort();
         scene.remove(this.group);
         this.group.traverse(obj => {
             if (!obj.isMesh) return;
@@ -260,7 +263,6 @@ class Tile {
         });
     }
 }
-
 
 class TileLoader {
     constructor() {
@@ -318,21 +320,33 @@ class Tiles {
     _key(tx, ty) { return `${tx},${ty}`; }
 
     retile() {
-        const list       = buildPriorityList();
-        const wantedKeys = new Set(list.map(p => this._key(p.tx, p.ty)));
+        const list        = buildPriorityList();
+        const loadRadius  = getLoadRadius();
+        const evictRadius = loadRadius + EVICT_BUFFER;
+
+        const { tx: ctx, ty: cty } = camTile();
+        const evictKeys = new Set();
+        const span = evictRadius + 1;
+        for (let dx = -span; dx <= span; dx++) {
+            for (let dy = -span; dy <= span; dy++) {
+                const tx = ctx + dx, ty = cty + dy;
+                if (Math.hypot(tx + 0.5 - ctx - 0.5, ty + 0.5 - cty - 0.5) <= evictRadius + 0.5) {
+                    evictKeys.add(this._key(tx, ty));
+                }
+            }
+        }
 
         for (const [key, tile] of this.map) {
-            if (!wantedKeys.has(key)) {
+            if (!evictKeys.has(key)) {
                 tile.dispose();
                 this.map.delete(key);
             }
         }
 
         if (this.map.size > MAX_TILES) {
-            const { cx, cy } = getViewBiasedCenter();
             const sorted = [...this.map.values()].sort((a, b) =>
-                Math.hypot(b.tx - cx, b.ty - cy) -
-                Math.hypot(a.tx - cx, a.ty - cy),
+                Math.hypot(b.tx - ctx, b.ty - cty) -
+                Math.hypot(a.tx - ctx, a.ty - cty),
             );
             const excess = this.map.size - MAX_TILES;
             for (let i = 0; i < excess; i++) {

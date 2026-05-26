@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT      = 3000;
 const CACHE_DIR = path.join(__dirname, 'tile_cache');
-const MAX_TILES = 2000;
+const MAX_TILES = 10000;
 
 const ORIGIN   = { lat: 51.505, lon: -0.09 };
 const TILE_DEG = 0.005;
