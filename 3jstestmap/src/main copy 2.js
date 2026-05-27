@@ -23,6 +23,9 @@ const ORIGIN = {
     lon: 0
 };
 
+const BUFFER = 3;
+const BOTTOM_BUFFER = 8;
+
 
 
 const scene = new THREE.Scene();
@@ -42,10 +45,11 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(CWIDTH, CHEIGHT);
 
 
-const fixedCamera = new THREE.OrthographicCamera(
-    -20,  20,
-     20, -20,
-    0.01, 1000
+const fixedCamera = new THREE.PerspectiveCamera(
+    20,
+    CWIDTH / CHEIGHT,
+    0.01,
+    1000
 );
 fixedCamera.position.set(0, 50, 0);
 fixedCamera.lookAt(0, 0, 0);
@@ -220,41 +224,7 @@ class Tiles {
         };
     }
 
-    retile() {
-        const tx = Math.round(camera.position.x);
-        const ty = Math.round(camera.position.z);
 
-        /*
-        for (let x = -areaRetile + tx; x <= areaRetile + tx; x++) {
-            for (let y = -areaRetile + ty; y <= areaRetile + ty; y++) {
-                this.newTile(x, y);
-            }
-        }
-        */
-
-        if (this.tiles.length <= maxTiles) {
-            return;
-        }
-
-        const sorted = [...this.tiles].sort((a, b) => {
-            const da =
-                Math.abs(a.x - tx) +
-                Math.abs(a.y - ty);
-
-            const db =
-                Math.abs(b.x - tx) +
-                Math.abs(b.y - ty);
-
-            return db - da;
-        });
-
-        const excess = this.tiles.length - maxTiles;
-
-        for (let i = 0; i < excess; i++) {
-            const tile = sorted[i];
-            this.deleteTile(tile.x, tile.y);
-        }
-    }
 
     drawCorners() {
         for (const marker of this.cornerMarkers) {
@@ -266,10 +236,10 @@ class Tiles {
         this.cornerMarkers = [];
 
         const corners = [
-            getCameraIntersection(-1.1,  1.7, camera, groundPlane),
-            getCameraIntersection( 1.1,  1.7, camera, groundPlane),
-            getCameraIntersection( 1.1, -1.1, camera, groundPlane),
-            getCameraIntersection(-1.1, -1.1, camera, groundPlane),
+            getCameraIntersection(-1,  1, camera, groundPlane),
+            getCameraIntersection( 1,  1, camera, groundPlane),
+            getCameraIntersection( 1, -1, camera, groundPlane),
+            getCameraIntersection(-1, -1, camera, groundPlane),
         ];
 
         const cornerMarkerMat = new THREE.MeshBasicMaterial({
@@ -292,12 +262,14 @@ class Tiles {
             y: p.z
         }));
 
-        const minX = Math.floor(Math.min(...poly.map(p => p.x)));
-        const maxX = Math.ceil(Math.max(...poly.map(p => p.x)));
-        const minY = Math.floor(Math.min(...poly.map(p => p.y)));
-        const maxY = Math.ceil(Math.max(...poly.map(p => p.y)));
+        poly[2].y += BOTTOM_BUFFER;
+        poly[3].y += BOTTOM_BUFFER;
 
-        let i = 0;
+        const minX = Math.floor(Math.min(...poly.map(p => p.x))) - BUFFER;
+        const maxX = Math.ceil(Math.max(...poly.map(p => p.x))) + BUFFER;
+
+        const minY = Math.floor(Math.min(...poly.map(p => p.y))) - BUFFER;
+        const maxY = Math.ceil(Math.max(...poly.map(p => p.y))) + BUFFER;
 
         for (let x = minX; x <= maxX; x++) {
             for (let y = minY; y <= maxY; y++) {
@@ -309,16 +281,29 @@ class Tiles {
                 if (pointInPolygon(center, poly)) {
                     this.newTile(x, y);
                 }
-
-                if (this.tiles.length <= maxTiles) {
-                    //return;
-                }
-
-                if(i>=1000){return;};
-                i++;
             }
         }
     }
+
+    calculatePriority(x, y, centerPoint) {
+
+        const tileCenterX = x + 0.5;
+        const tileCenterY = y + 0.5;
+
+        const dx = tileCenterX - centerPoint.x;
+        const dy = tileCenterY - centerPoint.y;
+
+        const centreDist = Math.sqrt(dx * dx + dy * dy);
+
+        const camDx = tileCenterX - camera.position.x;
+        const camDy = tileCenterY - camera.position.z;
+
+        const cameraDist =
+            Math.sqrt(camDx * camDx + camDy * camDy);
+
+        return centreDist * 0.7 +
+            cameraDist * 0.3;
+    }   
 }
 
 /*

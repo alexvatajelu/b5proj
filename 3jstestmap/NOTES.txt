@@ -26,13 +26,21 @@ current main.js:
 trying to make tile system
 
 
+
+
 nvm did a bunch of stuff, to much to explain rn
 
 
 
 
-to do:
+!!!!!
+currently main.js is a tile testing thing, if you want to see project so far, switch index.html script to mainworking.js
+!!!!!
 
+
+
+
+to do:
 
 
 set pespective and angles
