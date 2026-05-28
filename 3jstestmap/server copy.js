@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors    from 'cors';
 import fs      from 'fs/promises';
@@ -19,10 +20,12 @@ const OVERPASS_MIRRORS = [
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
 ];
 
-const OVERPASS_DELAY_MS = 1200;
-const OVERPASS_TIMEOUT  = 30_000;
-const MAX_QUEUE_SIZE    = 40;
-const DEFAULT_PRIORITY  = 5;
+const OVERPASS_DELAY_MS  = 1200;
+const OVERPASS_TIMEOUT   = 30_000;
+
+
+const MAX_QUEUE_SIZE     = 40;
+const DEFAULT_PRIORITY   = 5;
 
 
 const app = express();
@@ -31,6 +34,8 @@ app.use(cors());
 await fs.mkdir(CACHE_DIR, { recursive: true });
 
 const pending = new Map();
+
+
 const q       = [];
 let   running = 0;
 
@@ -47,6 +52,11 @@ function scheduleNext() {
         });
 }
 
+/**
+ * @param {() => Promise<any>} fn
+ * @param {number}             priority
+ * @returns {Promise<any>}
+ */
 function enqueue(fn, priority = DEFAULT_PRIORITY) {
     return new Promise((resolve, reject) => {
         const item = { fn, resolve, reject, priority };
@@ -108,9 +118,6 @@ async function fetchOverpass(tx, ty) {
     throw lastErr ?? new Error('All Overpass mirrors failed');
 }
 
-
-// ─── Cache helpers ────────────────────────────────────────────────────────────
-
 const cf = (tx, ty) => path.join(CACHE_DIR, `${tx}_${ty}.json`);
 
 async function readCache(tx, ty) {
@@ -152,8 +159,6 @@ async function evictLRU() {
 }
 
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
-
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.get('/test', async (_req, res) => {
@@ -179,21 +184,11 @@ app.get('/test', async (_req, res) => {
     res.json(results);
 });
 
-// ── /tile/:tx/:ty ─────────────────────────────────────────────────────────────
-//
-// ?cacheOnly=true   Return 404 immediately if the tile is not in the disk cache.
-//                   The client uses this for its fast cache pool — it needs an
-//                   answer in milliseconds without joining the Overpass queue.
-//
-// ?priority=N       Integer priority for Overpass queue position (lower = sooner).
-//                   Ignored when cacheOnly=true.
-
 app.get('/tile/:tx/:ty', async (req, res) => {
-    const tx        = parseInt(req.params.tx, 10);
-    const ty        = parseInt(req.params.ty, 10);
-    const priority  = Math.max(1, parseInt(req.query.priority ?? String(DEFAULT_PRIORITY), 10));
-    const cacheOnly = req.query.cacheOnly === 'true';
-    const key       = `${tx},${ty}`;
+    const tx       = parseInt(req.params.tx, 10);
+    const ty       = parseInt(req.params.ty, 10);
+    const priority = Math.max(1, parseInt(req.query.priority ?? String(DEFAULT_PRIORITY), 10));
+    const key      = `${tx},${ty}`;
 
     if (isNaN(tx) || isNaN(ty))
         return res.status(400).json({ error: 'tx and ty must be integers' });
@@ -201,16 +196,9 @@ app.get('/tile/:tx/:ty', async (req, res) => {
     try {
         const cached = await readCache(tx, ty);
         if (cached) {
-            console.log(`[HIT ] (${tx},${ty})${cacheOnly ? ' cache-only' : ''}`);
+            console.log(`[HIT ] (${tx},${ty})`);
             touchCache(tx, ty, cached);
             return res.json(cached.data);
-        }
-
-        // Cache miss — if the client only wanted cached data, stop here.
-        // This keeps the Overpass queue free and lets the client's fast pool
-        // stay responsive.
-        if (cacheOnly) {
-            return res.status(404).json({ cached: false });
         }
 
         if (pending.has(key)) {
