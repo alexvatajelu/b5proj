@@ -25,7 +25,7 @@ const API_CONCURRENCY   = 3;
 const MAX_CACHE_QUEUE   = 48;
 const MAX_API_QUEUE     = 16;
 
-const MAX_TILES  = 80;
+const MAX_TILES  = 5;
 const RETILE_MS  = 350;
 const SERVER     = 'http://localhost:3000';
 let   useServer  = false;
@@ -76,6 +76,7 @@ controls.touches = {
 };
 
 function lockCurrentTilt() {
+    return;
     const offset = camera.position.clone().sub(controls.target);
     const phi = Math.atan2(
         Math.sqrt(offset.x * offset.x + offset.z * offset.z),
@@ -546,7 +547,9 @@ const northButton = document.getElementById("north");
 
 const poiButton = document.getElementById("poi");
 const wideButton = document.getElementById("wide");
+const angleSlider = document.getElementById("angle");
 
+let angleSliderVal;
 
 function updateLivePos() {
     const lon = ORIGIN.lon + camera.position.x / LON_M;
@@ -564,6 +567,12 @@ function updateDir() {
     const t = ((angle / (Math.PI * 2)) + 1) % 1;
     dirText.textContent = t.toFixed(2);
 }
+
+angleSlider.addEventListener("change", () => {
+    angleSliderVal = angleSlider.value / 100;
+
+    console.log(angleSliderVal);
+});
 
 goButton.addEventListener("click", () => {
     const lon = parseFloat(lonInput.value);
@@ -618,8 +627,6 @@ wideButton.addEventListener("click", () => {
 function updateIO() {
     updateLivePos();
     updateDir();
-
-    console.log(camera.position.y);
 }
 
 function resizeRenderer() {
