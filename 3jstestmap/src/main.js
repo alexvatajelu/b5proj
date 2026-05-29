@@ -9,11 +9,17 @@ const LON_M    = 111320 * Math.cos(ORIGIN.lat * Math.PI / 180);
 const TILE_W   = TILE_DEG * LON_M;
 const TILE_H   = TILE_DEG * LAT_M;
 
-const RADIUS_MIN  = 1;
-const RADIUS_MAX  = 5;
-const HEIGHT_MIN  = 100;
-const HEIGHT_MAX  = 2500;
-const VIEW_BIAS   = 0.55;
+const RADIUS_MIN    = 1;
+const RADIUS_MAX    = 5;
+const HEIGHT_MIN    = 100;
+const HEIGHT_MAX    = 2500;
+const VIEW_BIAS     = 0.55;
+
+const VIEW_CLOSE    = 300;
+const VIEW_FAR      = 2000;
+
+const BUILDING_MAT  = new THREE.MeshStandardMaterial({ color: 0xdd3322, roughness: 0.85 });
+const FLOOR_MAT     = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1 });
 
 const VIEW_BUFFER_T   = 1.5;
 const BOTTOM_BUFFER_T = 2.0;
@@ -60,21 +66,34 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
-controls.minDistance   = 80;
-controls.maxDistance   = 3000;
+controls.minDistance   = VIEW_CLOSE;
+controls.maxDistance   = VIEW_FAR;
 controls.minPolarAngle = 0;
 controls.maxPolarAngle = Math.PI / 2;
 
+
+/*
+TEMP
+disabled rotation
+maybe reenable later if compass and rotation is added
+*/
 controls.mouseButtons = {
     LEFT:   THREE.MOUSE.PAN,
     MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT:  THREE.MOUSE.ROTATE,
+    //RIGHT:  THREE.MOUSE.ROTATE,
+    RIGHT:  THREE.MOUSE.PAN,
 };
 controls.touches = {
     ONE: THREE.TOUCH.PAN,
-    TWO: THREE.TOUCH.DOLLY_ROTATE,
+    //TWO: THREE.TOUCH.DOLLY_ROTATE,
+    TWO: THREE.TOUCH.PAN,
 };
 
+/*
+TO BE FIXED
+must be controllable, to move on animation
+can be diabled when rotation is disabled
+*/
 function lockCurrentTilt() {
     return;
     const offset = camera.position.clone().sub(controls.target);
@@ -94,7 +113,7 @@ scene.add(sun);
 
 const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(20000, 20000),
-    new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1 }),
+    FLOOR_MAT,
 );
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -1;
@@ -285,8 +304,7 @@ function buildingMesh(way, nodeById) {
     try {
         const geo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
         geo.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
-        const mat  = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.85 });
-        const mesh = new THREE.Mesh(geo, mat);
+        const mesh = new THREE.Mesh(geo, BUILDING_MAT);
         mesh.userData.tags = tags;
         return mesh;
     } catch { return null; }
@@ -604,7 +622,7 @@ poiButton.addEventListener("click", () => {
     const offset = camera.position.clone().sub(target);
     const azimuth = Math.atan2(offset.x, offset.z);
 
-    const newY    = 300;
+    const newY    = 100;
     const phi     = Math.PI / 4;
     const hDist   = newY * Math.tan(phi);
 
@@ -619,7 +637,7 @@ poiButton.addEventListener("click", () => {
 
 wideButton.addEventListener("click", () => {
     const target = controls.target;
-    camera.position.set(target.x, target.y + 1000, target.z);
+    camera.position.set(target.x, target.y + 1500, target.z);
     controls.update();
     lockCurrentTilt();
 });

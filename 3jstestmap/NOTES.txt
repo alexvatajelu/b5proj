@@ -44,20 +44,79 @@ to do:
 
 
 set pespective and angles
+
 load poi from api as larger tiles
 compare with list of poi
 draw and clickable poi
 filter by sus and confirmed
+
 animations and zoom on click
 go to location and compass
 redo drag to move
 tile priority and and view area
+
 react window
 ui button controls
 other pages
 
 
+launch as server
+
+
+controls:
+orbit controls facing down and as now, move rig
+rig to move camera, with offset for animation
+animation to zoom, tilt up, move backwards
+lerp to and from position from orbit controls
+
+
+
+poi:
+get 8*8 tile area for lookup api
+set building mat to yellow if near or within polygon to poi
+also create sphere object to mat at location
+
+if on seperate list of confirmed poi, draw red, and red sphere
+
+on hover, show data
+on click, show and hold data, zoom animation
+or reclick or backscroll, zoom out animation
+
+
+
+react:
+create as window
 
 
 
 
+
+
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 8000);
+camera.position.set(0, 800, 0);
+camera.lookAt(0, 0, 0);
+
+const cameraRig = new THREE.Object3D();
+cameraRig.lookAt(0,0,0);
+cameraRig.add(camera);
+scene.add(cameraRig);
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#canvas'), antialias: true });
+renderer.setSize(
+  renderer.domElement.clientWidth,
+  renderer.domElement.clientHeight,
+  false
+);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+const controls = new OrbitControls(cameraRig, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance   = VIEW_CLOSE;
+controls.maxDistance   = 3000;
+controls.minPolarAngle = 0;
+controls.maxPolarAngle = Math.PI / 2;
