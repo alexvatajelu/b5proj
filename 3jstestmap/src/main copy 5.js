@@ -2,46 +2,33 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-const ORIGIN                = { lat: 51.505, lon: -0.09 };
-const TILE_DEG              = 0.005;
-const LAT_M                 = 110540;
-const LON_M                 = 111320 * Math.cos(ORIGIN.lat * Math.PI / 180);
-const TILE_W                = TILE_DEG * LON_M;
-const TILE_H                = TILE_DEG * LAT_M;
+const ORIGIN   = { lat: 51.505, lon: -0.09 };
+const TILE_DEG = 0.005;
+const LAT_M    = 110540;
+const LON_M    = 111320 * Math.cos(ORIGIN.lat * Math.PI / 180);
+const TILE_W   = TILE_DEG * LON_M;
+const TILE_H   = TILE_DEG * LAT_M;
 
-const RADIUS_MIN            = 1;
-const RADIUS_MAX            = 5;
-const HEIGHT_MIN            = 100;
-const HEIGHT_MAX            = 4000;
-const CAM_FOV               = 30;
-const VIEW_BIAS             = 0.55;
-const VIEW_CLOSE            = 500;
-const VIEW_FAR              = 5000;
-const VIEW_BUFFER_T         = 1.5;
-const BOTTOM_BUFFER_T       = 1.0;
+const RADIUS_MIN      = 1;
+const RADIUS_MAX      = 5;
+const HEIGHT_MIN      = 100;
+const HEIGHT_MAX      = 2500;
+const VIEW_BIAS       = 0.55;
+const VIEW_CLOSE      = 300;
+const VIEW_FAR        = 2000;
+const VIEW_BUFFER_T   = 1.5;
+const BOTTOM_BUFFER_T = 2.0;
 
-const EVICT_BUFFER          = 1;
-const EVICT_GRACE_MS        = 300;
-const RETRY_AFTER_MS        = 1500;
-const POLL_CONCURRENCY      = 8;
-const FETCH_CONCURRENCY     = 3;
-const MAX_TILES             = 60;
-const RETILE_MS             = 350;
+const BUILDING_MAT = new THREE.MeshStandardMaterial({ color: 0xdd3322, roughness: 0.85 });
+const FLOOR_MAT    = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 1 });
 
-const DATA_TILE_FACTOR      = 10;
-const DATA_TILE_W           = TILE_W * DATA_TILE_FACTOR;
-const DATA_TILE_H           = TILE_H * DATA_TILE_FACTOR;
-
-const POI_GEO               = new THREE.BoxGeometry(10, 10, 10);
-const POI_MAT               = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
-const POI_BUILDING_MAT      = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
-const BUILDING_MAT          = new THREE.MeshStandardMaterial({ color: 0xff4433, roughness: 1 });
-const FLOOR_MAT             = new THREE.MeshBasicMaterial({ color: 0xff4433, roughness: 1, wireframe:true });
-const EMPTY_GRID_MAT        = new THREE.MeshBasicMaterial({ color: 0xbb3333, wireframe: true });
-const PRE_LOAD_MAT          = new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true });
-const POI_HEIGHT            = 2;
-const POI_INFLUENCE_RADIUS  = 8;
-
+const EVICT_BUFFER     = 1;
+const EVICT_GRACE_MS   = 3000;
+const RETRY_AFTER_MS   = 1500;
+const POLL_CONCURRENCY = 8;
+const FETCH_CONCURRENCY = 3;
+const MAX_TILES        = 100;
+const RETILE_MS        = 350;
 
 const SERVER    = 'http://localhost:3000';
 let   useServer = false;
@@ -61,7 +48,7 @@ await detectServer();
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
-const camera = new THREE.PerspectiveCamera(CAM_FOV, window.innerWidth / window.innerHeight, 1, 8000);
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 8000);
 camera.position.set(0, 800, 0);
 camera.lookAt(0, 0, 0);
 
@@ -75,7 +62,7 @@ controls.dampingFactor  = 0.08;
 controls.minDistance    = VIEW_CLOSE;
 controls.maxDistance    = VIEW_FAR;
 controls.minPolarAngle  = 0;
-controls.maxPolarAngle  = (Math.PI / 2) * 0.3;
+controls.maxPolarAngle  = Math.PI / 2;
 
 /*
 TEMP
@@ -114,16 +101,13 @@ const sun = new THREE.DirectionalLight(0xffffff, 2.5);
 sun.position.set(300, 600, 200);
 scene.add(sun);
 
-
 const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(10 , 10),
+    new THREE.PlaneGeometry(20000, 20000),
     FLOOR_MAT,
 );
-
-//const ground = new THREE.GridHelper( 5000, 10 );
-//ground.rotation.x = -Math.PI / 2;
+ground.rotation.x = -Math.PI / 2;
 ground.position.y = -1;
-//scene.add(ground);
+scene.add(ground);
 
 
 function tileLatLon(tx, ty) {
@@ -260,7 +244,6 @@ function _priorityListFallback() {
 }
 
 
-
 async function fetchOSM(tx, ty, priority = 5, signal = null) {
     if (useServer) {
         const res = await fetch(
@@ -290,77 +273,7 @@ async function fetchOSM(tx, ty, priority = 5, signal = null) {
     return res.json();
 }
 
-function pointInPolygon(point, polygon) {
-    const x = point.x;
-    const z = point.z;
-
-    let inside = false;
-
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const xi = polygon[i].x;
-        const zi = polygon[i].z;
-        const xj = polygon[j].x;
-        const zj = polygon[j].z;
-
-        const intersect =
-            ((zi > z) !== (zj > z)) &&
-            (x < ((xj - xi) * (z - zi)) / (zj - zi) + xi);
-
-        if (intersect) inside = !inside;
-    }
-
-    return inside;
-}
-
-function pointToSegmentDistance(point, a, b) {
-    const px = point.x;
-    const pz = point.z;
-
-    const ax = a.x;
-    const az = a.z;
-    const bx = b.x;
-    const bz = b.z;
-
-    const dx = bx - ax;
-    const dz = bz - az;
-
-    const lengthSq = dx * dx + dz * dz;
-
-    if (lengthSq === 0) {
-        return Math.hypot(px - ax, pz - az);
-    }
-
-    let t = ((px - ax) * dx + (pz - az) * dz) / lengthSq;
-    t = Math.max(0, Math.min(1, t));
-
-    const closestX = ax + t * dx;
-    const closestZ = az + t * dz;
-
-    return Math.hypot(px - closestX, pz - closestZ);
-}
-
-function isPOINearBuilding(point, polygon, radius) {
-    // Exact containment first
-    if (pointInPolygon(point, polygon)) {
-        return true;
-    }
-
-    // Fallback: distance to building edges
-    for (let i = 0; i < polygon.length; i++) {
-        const a = polygon[i];
-        const b = polygon[(i + 1) % polygon.length];
-
-        const dist = pointToSegmentDistance(point, a, b);
-
-        if (dist <= radius) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-function buildingMesh(way, nodeById, poiWorlds = []) {
+function buildingMesh(way, nodeById) {
     const pts = (way.nodes || [])
         .map(id => nodeById.get(id))
         .filter(Boolean)
@@ -369,44 +282,26 @@ function buildingMesh(way, nodeById, poiWorlds = []) {
 
     const tags = way.tags || {};
     let h = 10;
-    if (tags.height) {
-        h = parseFloat(tags.height) || h;
-    } else if (tags['building:levels']) {
-        h = parseInt(tags['building:levels']) * 3;
-    }
+    if (tags.height)                  h = parseFloat(tags.height)            || h;
+    else if (tags['building:levels']) h = parseInt(tags['building:levels']) * 3;
+
     const shape = new THREE.Shape();
     shape.moveTo(pts[0].x, -pts[0].z);
-    for (let i = 1; i < pts.length; i++) {
-        shape.lineTo(pts[i].x, -pts[i].z);
-    }
+    for (let i = 1; i < pts.length; i++) shape.lineTo(pts[i].x, -pts[i].z);
     shape.closePath();
 
-    const nearPOI = poiWorlds.some(pw =>
-        isPOINearBuilding(pw, pts, POI_INFLUENCE_RADIUS)
-    );
     try {
-        const geo = new THREE.ExtrudeGeometry(shape, {
-            depth: h,
-            bevelEnabled: false
-        });
-        geo.applyMatrix4(
-            new THREE.Matrix4().makeRotationX(-Math.PI / 2)
-        );
-        const mesh = new THREE.Mesh(
-            geo,
-            nearPOI ? POI_BUILDING_MAT : BUILDING_MAT
-        );
+        const geo  = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+        geo.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
+        const mesh = new THREE.Mesh(geo, BUILDING_MAT);
         mesh.userData.tags = tags;
         return mesh;
-    } catch {
-        return null;
-    }
+    } catch { return null; }
 }
 
 
-
 class Tile {
-    constructor(tx, ty, dataTiles) {
+    constructor(tx, ty) {
         this.tx          = tx;
         this.ty          = ty;
         this.state       = 'idle';
@@ -415,13 +310,7 @@ class Tile {
         this.group       = new THREE.Group();
         this._abort      = new AbortController();
         this._placeholder = null;
-
-        const dtx = Math.floor(tx / DATA_TILE_FACTOR);
-        const dty = Math.floor(ty / DATA_TILE_FACTOR);
-        this.dataTile = dataTiles.getOrCreate(dtx, dty);
-
         scene.add(this.group);
-        this._buildPlaceholder(); 
     }
 
     get loading() { return this.state === 'checking' || this.state === 'fetching'; }
@@ -433,61 +322,38 @@ class Tile {
         return this.state === 'waiting' && Date.now() - this.lastChecked > RETRY_AFTER_MS;
     }
 
-    _buildPlaceholder() {
+    _ensurePlaceholder() {
         if (this._placeholder) return;
         const cx = (this.tx + 0.5) * TILE_W;
         const cz = -(this.ty + 0.5) * TILE_H;
         this._placeholder = new THREE.Mesh(
             new THREE.PlaneGeometry(TILE_W - 2, TILE_H - 2),
-            PRE_LOAD_MAT,
+            new THREE.MeshBasicMaterial({ color: 0x2255cc, wireframe: true }),
         );
         this._placeholder.rotation.x = -Math.PI / 2;
         this._placeholder.position.set(cx, 0, cz);
         this.group.add(this._placeholder);
     }
 
-    _ensurePlaceholder() {
-        this._buildPlaceholder();
-        this._placeholder.material = EMPTY_GRID_MAT;
-    }
-
     _removePlaceholder() {
         if (!this._placeholder) return;
         this.group.remove(this._placeholder);
         this._placeholder.geometry.dispose();
+        this._placeholder.material.dispose();
         this._placeholder = null;
     }
 
-    _processData(data, pois = []) {
+    _processData(data) {
         const nodeMap = new Map();
         for (const el of data.elements) {
             if (el.type === 'node') nodeMap.set(el.id, el);
         }
-
-        const poiWorlds = pois.map(p => toWorld(p.lat, p.lon));
-
         for (const el of data.elements) {
             if (el.type === 'way' && el.tags?.building) {
-                const m = buildingMesh(el, nodeMap, poiWorlds);
+                const m = buildingMesh(el, nodeMap);
                 if (m) this.group.add(m);
             }
         }
-
-        const minX = this.tx * TILE_W;
-        const maxX = (this.tx + 1) * TILE_W;
-        const minZ = -(this.ty + 1) * TILE_H;
-        const maxZ = -this.ty * TILE_H;
-
-        for (let i = 0; i < pois.length; i++) {
-            const pw = poiWorlds[i];
-            if (pw.x >= minX && pw.x < maxX && pw.z > minZ && pw.z <= maxZ) {
-                const mesh = new THREE.Mesh(POI_GEO, POI_MAT);
-                mesh.position.set(pw.x, POI_HEIGHT, pw.z);
-                mesh.userData.tags = pois[i].tags;
-                this.group.add(mesh);
-            }
-        }
-
         this._removePlaceholder();
         this.state = 'loaded';
     }
@@ -500,19 +366,19 @@ class Tile {
 
         const { signal } = this._abort;
         try {
-            const [res, pois] = await Promise.all([
-                fetch(`${SERVER}/tile/${this.tx}/${this.ty}?cacheOnly=true`, { signal }),
-                this.dataTile.ready,
-            ]);
+            const res = await fetch(
+                `${SERVER}/tile/${this.tx}/${this.ty}?cacheOnly=true`,
+                { signal },
+            );
             if (res.status === 404) { this.state = 'waiting'; return; }
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
-            if (!signal.aborted) this._processData(data, pois);
+            if (!signal.aborted) this._processData(data);
         } catch (e) {
             this._removePlaceholder();
             if (e.name !== 'AbortError') {
                 console.warn(`Tile (${this.tx},${this.ty}) check: ${e.message}`);
-                this.state = 'idle';
+                this.state = 'idle'; // transient error — allow retry next cycle
             }
         }
     }
@@ -525,11 +391,8 @@ class Tile {
 
         const { signal } = this._abort;
         try {
-            const [data, pois] = await Promise.all([
-                fetchOSM(this.tx, this.ty, 5, signal),
-                this.dataTile.ready,
-            ]);
-            if (!signal.aborted) this._processData(data, pois);
+            const data = await fetchOSM(this.tx, this.ty, 5, signal);
+            if (!signal.aborted) this._processData(data);
         } catch (e) {
             this._removePlaceholder();
             if (e.name === 'AbortError') this.state = 'idle';
@@ -551,82 +414,6 @@ class Tile {
     }
 }
 
-class DataTile {
-    constructor(dtx, dty) {
-        this.dtx   = dtx;
-        this.dty   = dty;
-        this.state = 'idle';   // idle | loading | loaded | failed
-        this.pois  = [];
-
-        this._abort = new AbortController();
-
-        // Tiles await this. Always resolves (with [] on failure) so tiles never hang.
-        this.ready = new Promise(res => { this._resolveReady = res; });
-    }
-
-    async fetch() {
-        if (this.state !== 'idle') return;
-        this.state = 'loading';
-        const { signal } = this._abort;
-        try {
-            const res = await fetch(`${SERVER}/poi/${this.dtx}/${this.dty}`, { signal });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const pois = await res.json();
-            if (!signal.aborted) {
-                this.pois  = pois;
-                this.state = 'loaded';
-                this._resolveReady(pois);
-                console.log(`[POI ] (${this.dtx},${this.dty}) → ${pois.length} POI(s)`);
-            }
-        } catch (e) {
-            if (e.name === 'AbortError') { this.state = 'idle'; return; }
-            console.warn(`DataTile (${this.dtx},${this.dty}): ${e.message}`);
-            this.state = 'failed';
-            this._resolveReady([]);   // unblock waiting geometry tiles
-        }
-    }
-
-    dispose() {
-        this._abort.abort();
-        this._resolveReady([]);       // unblock any tiles still awaiting this
-    }
-}
-
-class DataTiles {
-    constructor() { this.map = new Map(); }
-
-    _key(dtx, dty) { return `${dtx},${dty}`; }
-
-    // Called by Tile constructor. Returns a DataTile (or a dummy when offline).
-    getOrCreate(dtx, dty) {
-        if (!useServer) return { ready: Promise.resolve([]), dispose() {} };
-        const key = this._key(dtx, dty);
-        if (!this.map.has(key)) {
-            const dt = new DataTile(dtx, dty);
-            this.map.set(key, dt);
-            dt.fetch();
-        }
-        return this.map.get(key);
-    }
-
-    // Evict data tiles whose geometry tiles have all left the map.
-    // Call this after geometry tile eviction so references stay valid.
-    update(tileMap) {
-        const needed = new Set();
-        for (const [, tile] of tileMap) {
-            needed.add(this._key(
-                Math.floor(tile.tx / DATA_TILE_FACTOR),
-                Math.floor(tile.ty / DATA_TILE_FACTOR),
-            ));
-        }
-        for (const [key, dtile] of this.map) {
-            if (!needed.has(key)) {
-                dtile.dispose();
-                this.map.delete(key);
-            }
-        }
-    }
-}
 
 class TileLoader {
     constructor() {
@@ -674,10 +461,9 @@ class TileLoader {
 
 
 class Tiles {
-    constructor(dataTiles) {
-        this.dataTiles = dataTiles;
-        this.map       = new Map();
-        this.loader    = new TileLoader();
+    constructor() {
+        this.map    = new Map();
+        this.loader = new TileLoader();
         this.retile();
     }
 
@@ -702,10 +488,15 @@ class Tiles {
         const evictDist   = maxViewDist + EVICT_BUFFER;
 
         for (const [key, tile] of this.map) {
-            if (wantedKeys.has(key)) { tile.lastWanted = now; continue; }
-            //if (tile.loading) continue;
+            if (wantedKeys.has(key)) {
+                tile.lastWanted = now;
+                continue;
+            }
+            if (tile.loading) continue;
+
             const dist      = Math.hypot(tile.tx + 0.5 - vc.ftx, tile.ty + 0.5 - vc.fty);
             const graceOver = (now - tile.lastWanted) > EVICT_GRACE_MS;
+
             if (dist > evictDist && graceOver) {
                 tile.dispose();
                 this.map.delete(key);
@@ -714,89 +505,23 @@ class Tiles {
 
         for (const { tx, ty } of list) {
             const key = this._key(tx, ty);
-            if (!this.map.has(key)) this.map.set(key, new Tile(tx, ty, this.dataTiles));
+            if (!this.map.has(key)) this.map.set(key, new Tile(tx, ty));
         }
-
-        // Evict data tiles after geometry tiles so references are still valid above
-        this.dataTiles.update(this.map);
 
         this.loader.update(list, this.map);
     }
 }
 
-async function gotoLocation() {
-    const query = locInput.value.trim();
-    if (!query) return;
 
-    const origLabel = goButton.textContent;
-    goButton.disabled = true;
-    goButton.textContent = '…';
-    locInput.disabled = true;
-
-    try {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=gb&addressdetails=1`,
-            {
-                headers: {
-                    'Accept-Language': 'en',
-                    'User-Agent': 'TileMapApp/1.0 (local dev)',
-                },
-                signal: AbortSignal.timeout(8000),
-            }
-        );
-        const results = await res.json();
-
-        if (!results.length || results[0].address?.country_code !== 'gb') {
-            goButton.textContent = '?';
-            setTimeout(() => {
-                goButton.textContent = origLabel;
-                goButton.disabled = false;
-                locInput.disabled = false;
-            }, 1500);
-            return;
-        }
-
-        const lat = parseFloat(results[0].lat);
-        const lon = parseFloat(results[0].lon);
-        const wx  = (lon - ORIGIN.lon) * LON_M;
-        const wz  = -(lat - ORIGIN.lat) * LAT_M;
-        const dx  = wx - camera.position.x;
-        const dz  = wz - camera.position.z;
-
-        camera.position.x += dx;
-        camera.position.z += dz;
-        controls.target.x += dx;
-        controls.target.z += dz;
-        controls.update();
-
-        locInput.value = results[0].display_name; // confirm what was found
-    } catch (e) {
-        console.error('Geocode error:', e);
-        goButton.textContent = '!';
-        setTimeout(() => {
-            goButton.textContent = origLabel;
-            goButton.disabled = false;
-            locInput.disabled = false;
-        }, 1500);
-        return;
-    }
-
-    goButton.textContent = origLabel;
-    goButton.disabled = false;
-    locInput.disabled = false;
-}
-
-const livePos       = document.getElementById('livepos');
-const lonInput      = document.getElementById('lonin');
-const latInput      = document.getElementById('latin');
-const locInput      = document.getElementById('locin');
-const goButton      = document.getElementById('gotopos');
-const dirText       = document.getElementById('dir');
-const northButton   = document.getElementById('north');
-const poiButton     = document.getElementById('poi');
-const wideButton    = document.getElementById('wide');
-const angleSlider   = document.getElementById('angle');
-const poiOOut       = document.getElementById('poi');
+const livePos     = document.getElementById('livepos');
+const lonInput    = document.getElementById('lonin');
+const latInput    = document.getElementById('latin');
+const goButton    = document.getElementById('gotopos');
+const dirText     = document.getElementById('dir');
+const northButton = document.getElementById('north');
+const poiButton   = document.getElementById('poi');
+const wideButton  = document.getElementById('wide');
+const angleSlider = document.getElementById('angle');
 
 let angleSliderVal;
 
@@ -822,13 +547,21 @@ angleSlider.addEventListener('change', () => {
     console.log(angleSliderVal);
 });
 
-goButton.addEventListener('click', gotoLocation);
+goButton.addEventListener('click', () => {
+    const lon = parseFloat(lonInput.value);
+    const lat = parseFloat(latInput.value);
+    if (isNaN(lon) || isNaN(lat)) return;
 
-locInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        gotoLocation();
-    }
+    const wx = (lon - ORIGIN.lon) * LON_M;
+    const wz = -(lat - ORIGIN.lat) * LAT_M;
+    const dx = wx - camera.position.x;
+    const dz = wz - camera.position.z;
+
+    camera.position.x += dx;
+    camera.position.z += dz;
+    controls.target.x += dx;
+    controls.target.z += dz;
+    controls.update();
 });
 
 northButton.addEventListener('click', () => {
@@ -878,8 +611,7 @@ resizeRenderer();
 window.addEventListener('resize', resizeRenderer);
 
 
-const dataTiles = new DataTiles();
-const tiles = new Tiles(dataTiles);
+const tiles = new Tiles();
 let lastRetile = 0;
 
 function animate() {

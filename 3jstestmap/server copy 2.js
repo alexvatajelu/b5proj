@@ -13,8 +13,6 @@ const MAX_CACHE_TILES = 10000;
 const ORIGIN   = { lat: 51.505, lon: -0.09 };
 const TILE_DEG = 0.005;
 
-const MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 1 week
-
 const OVERPASS_MIRRORS = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
@@ -22,16 +20,10 @@ const OVERPASS_MIRRORS = [
 ];
 
 const OVERPASS_DELAY_MS = 1200;
-const OVERPASS_TIMEOUT  = 10_000;
+const OVERPASS_TIMEOUT  = 30_000;
 const MAX_QUEUE_SIZE    = 40;
 const BG_QUEUE_SLOTS    = 4;    // max background items allowed in q at once
 const DEFAULT_PRIORITY  = 5;
-
-const POI_CACHE_DIR    = path.join(__dirname, 'poi_cache');
-const DATA_TILE_FACTOR = 10;                       // data tile = 10×10 geom tiles
-const POI_QUERY_REGEX  =
-    'Sports Direct|B&M|Iceland|Sainsbury|Spar|Costcutter|Budgens|' +
-    'Farmfoods|River Island|Home Bargains|Frasers|Flannels|Southern Co-op|Eat 17';
 
 
 const app = express();
@@ -39,12 +31,7 @@ app.use(cors());
 app.use(express.json());
 
 await fs.mkdir(CACHE_DIR, { recursive: true });
-await fs.mkdir(POI_CACHE_DIR, { recursive: true });
 
-function isFresh(entry) {
-    if (!entry?.fetchedAt) return false;
-    return (Date.now() - new Date(entry.fetchedAt).getTime()) < MAX_CACHE_AGE_MS;
-}
 
 // ─── Overpass queue ───────────────────────────────────────────────────────────
 //
@@ -140,62 +127,13 @@ async function fetchOverpass(tx, ty) {
     throw lastErr ?? new Error('All Overpass mirrors failed');
 }
 
-async function fetchOverpassPOI(dtx, dty) {
-    const s    = ORIGIN.lat +  dty      * TILE_DEG * DATA_TILE_FACTOR;
-    const w    = ORIGIN.lon +  dtx      * TILE_DEG * DATA_TILE_FACTOR;
-    const n    = ORIGIN.lat + (dty + 1) * TILE_DEG * DATA_TILE_FACTOR;
-    const e    = ORIGIN.lon + (dtx + 1) * TILE_DEG * DATA_TILE_FACTOR;
-    const bbox = `${s},${w},${n},${e}`;
-
-    const body = 'data=' + encodeURIComponent(
-        `[out:json][timeout:30];\n` +
-        `(\n` +
-        `  node["name"~"${POI_QUERY_REGEX}",i](${bbox});\n` +
-        `  way["name"~"${POI_QUERY_REGEX}",i](${bbox});\n` +
-        `);\n` +
-        `out center;`
-    );
-    const opts = {
-        method:  'POST',
-        body,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'User-Agent':   'TileMapApp/1.0 (local dev)',
-        },
-        signal: AbortSignal.timeout(OVERPASS_TIMEOUT),
-    };
-
-    let lastErr;
-    for (const mirror of OVERPASS_MIRRORS) {
-        try {
-            const res = await fetch(mirror, opts);
-            if (res.status === 429 || res.status === 406) {
-                lastErr = new Error(`HTTP ${res.status}`);
-                continue;
-            }
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            console.log(`  [POI mirror] ${mirror} → OK`);
-            return await res.json();
-        } catch (err) {
-            console.warn(`  [POI mirror] ${mirror} → ${err.message}`);
-            lastErr = err;
-        }
-    }
-    throw lastErr ?? new Error('All Overpass mirrors failed');
-}
 
 // ─── Cache helpers ────────────────────────────────────────────────────────────
 const cf = (tx, ty) => path.join(CACHE_DIR, `${tx}_${ty}.json`);
 
 async function readCache(tx, ty) {
-    try {
-        const entry = JSON.parse(await fs.readFile(cf(tx, ty), 'utf8'));
-        if (!isFresh(entry)) {
-            console.log(`[STALE] geo (${tx},${ty}) — will re-fetch`);
-            return null;
-        }
-        return entry;
-    } catch { return null; }
+    try   { return JSON.parse(await fs.readFile(cf(tx, ty), 'utf8')); }
+    catch { return null; }
 }
 
 async function writeCache(tx, ty, data) {
@@ -232,89 +170,28 @@ async function evictLRU() {
 }
 
 
-const poiCf = (dtx, dty) => path.join(POI_CACHE_DIR, `${dtx}_${dty}.json`);
-
-async function readPoiCache(dtx, dty) {
-    try {
-        const entry = JSON.parse(await fs.readFile(poiCf(dtx, dty), 'utf8'));
-        if (!isFresh(entry)) {
-            console.log(`[STALE] poi (${dtx},${dty}) — will re-fetch`);
-            return null;
-        }
-        return entry;
-    } catch { return null; }
-}
-
-async function writePoiCache(dtx, dty, pois) {
-    await fs.writeFile(poiCf(dtx, dty), JSON.stringify({
-        dtx, dty,
-        fetchedAt: new Date().toISOString(),
-        data: pois,
-    }));
-}
-
-function parsePoiElements(raw) {
-    return raw.elements
-        .map(el => ({
-            id:   el.id,
-            type: el.type,
-            lat:  el.lat ?? el.center?.lat,
-            lon:  el.lon ?? el.center?.lon,
-            tags: el.tags ?? {},
-        }))
-        .filter(el => el.lat != null && el.lon != null);
-}
-
-app.get('/poi/:dtx/:dty', async (req, res) => {
-    const dtx = parseInt(req.params.dtx, 10);
-    const dty = parseInt(req.params.dty, 10);
-    if (isNaN(dtx) || isNaN(dty))
-        return res.status(400).json({ error: 'dtx and dty must be integers' });
-
-    // 'poi:' prefix avoids collision with regular tile keys in pending
-    const key = `poi:${dtx},${dty}`;
-
-    try {
-        // Cache hit — instant
-        const cached = await readPoiCache(dtx, dty);
-        if (cached) {
-            console.log(`[POI HIT ] (${dtx},${dty})`);
-            return res.json(cached.data);
-        }
-
-        // Deduplicate concurrent requests for the same data tile
-        if (pending.has(key)) {
-            console.log(`[POI WAIT] (${dtx},${dty})`);
-            return res.json(await pending.get(key));
-        }
-
-        console.log(`[POI MISS] (${dtx},${dty}) — queue=${q.length}`);
-
-        // Enqueue with priority 3 — below explicit user tile requests (5+)
-        // but above background geometry tiles
-        const p = enqueue(
-            () => fetchOverpassPOI(dtx, dty).then(raw => {
-                const pois = parsePoiElements(raw);
-                writePoiCache(dtx, dty, pois).catch(console.error);
-                return pois;
-            }),
-            3,
-            key,
-        );
-        pending.set(key, p);
-
-        let pois;
-        try   { pois = await p; }
-        finally { pending.delete(key); }
-
-        console.log(`[POI DONE] (${dtx},${dty}) → ${pois.length} POI(s)`);
-        return res.json(pois);
-
-    } catch (err) {
-        console.error(`[POI ERR ] (${dtx},${dty}): ${err.message}`);
-        return res.status(502).json({ error: err.message });
-    }
-});
+// ─── Background priority worker ───────────────────────────────────────────────
+//
+//  The client calls POST /priority on every retile cycle (every ~350 ms) with
+//  its complete sorted tile list.  We store that as bgQueue and feed tiles from
+//  it into the main Overpass queue whenever slots are available.
+//
+//  Key design properties:
+//
+//  • Cache hits via GET /tile?cacheOnly=true NEVER touch this queue or wait for
+//    it.  The server returns instantly from disk.  The queue only matters for
+//    Overpass fetches.
+//
+//  • bgQueue items are removed when no longer wanted (camera moved away), so
+//    the server never wastes Overpass slots on tiles the client no longer needs.
+//
+//  • BG_QUEUE_SLOTS caps how many background items can sit in q at once, leaving
+//    headroom for explicit GET /tile requests to jump ahead.
+//
+//  • promoteBg() is called:
+//      - when POST /priority arrives (new wish-list)
+//      - when scheduleNext() finds both q and running empty (idle slot)
+//      - when a background fetch finishes (slot freed)
 
 const bgQueue    = [];    // [{ tx, ty, dist }] sorted ascending by dist
 let   bgBusy     = false; // re-entrancy guard (promoteBg is async)
@@ -490,7 +367,6 @@ app.get('/stats', async (_req, res) => {
         queueRunning: running,
         pendingCount: pending.size,
         maxQueueSize: MAX_QUEUE_SIZE,
-        poiCached: (await fs.readdir(POI_CACHE_DIR)).filter(f => f.endsWith('.json')).length,
     });
 });
 
