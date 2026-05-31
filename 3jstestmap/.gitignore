@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 /tile_cache/*
+/poi_cache/*

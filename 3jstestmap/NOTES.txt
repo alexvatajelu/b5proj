@@ -93,6 +93,28 @@ create as window
 
 
 
+to do:
+
+
+prio:
+
+react window + ui
+set up server + database
+
+
+qol:
+
+clickable poi geo
+function when no server
+
+optimisations + refactor
+
+
+
+
+
+
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 

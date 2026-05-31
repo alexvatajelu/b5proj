@@ -33,10 +33,10 @@ const DATA_TILE_W           = TILE_W * DATA_TILE_FACTOR;
 const DATA_TILE_H           = TILE_H * DATA_TILE_FACTOR;
 
 const COL_MAIN              = 0xff3322;
-const COL_SUSP              = 0xffcc77;
+const COL_SUSP              = 0xffaaaa;
 const COL_CONF              = 0xffffff;
 
-const POI_GEO                       = new THREE.BoxGeometry(24, 20, 24);
+const POI_GEO                       = new THREE.BoxGeometry(24, 20.1, 24);
 const POI_SUSPECTED_MAT             = new THREE.MeshStandardMaterial({ color: COL_SUSP, roughness: 1 });
 const POI_CONFIRMED_MAT             = new THREE.MeshStandardMaterial({ color: COL_CONF, roughness: 1 });
 const POI_SUSPECTED_HOVER_MAT       = new THREE.MeshStandardMaterial({ color: COL_SUSP, roughness: 0.6 });
@@ -489,6 +489,7 @@ function buildingMesh(way, nodeById, pois = []) {
             new THREE.Matrix4().makeRotationX(-Math.PI / 2)
         );
         const mesh = new THREE.Mesh(geo, material);
+        if (buildingType=='confirmed'||buildingType=='suspected'){mesh.position.y+=1;};
         mesh.userData.tags = tags;
         return mesh;
     } catch {
@@ -935,8 +936,9 @@ async function gotoLocation() {
         controls.target.x += dx;
         controls.target.z += dz;
         controls.update();
+        resetDirection();
 
-        locInput.value = results[0].display_name; // confirm what was found
+        locInput.value = results[0].display_name;
     } catch (e) {
         console.error('Geocode error:', e);
         goButton.textContent = '!';
@@ -998,13 +1000,15 @@ locInput.addEventListener('keydown', e => {
     }
 });
 
-northButton.addEventListener('click', () => {
+function resetDirection() {
     const target = controls.target;
     const offset = camera.position.clone().sub(target);
     const hDist  = Math.sqrt(offset.x * offset.x + offset.z * offset.z);
     camera.position.set(target.x, camera.position.y, target.z + hDist);
     controls.update();
-});
+}
+
+northButton.addEventListener('click', resetDirection);
 
 poiButton.addEventListener('click', () => {
     const target  = controls.target;
