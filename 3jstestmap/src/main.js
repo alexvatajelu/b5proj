@@ -12,12 +12,12 @@ const TILE_H                = TILE_DEG * LAT_M;
 const RADIUS_MIN            = 1;
 const RADIUS_MAX            = 5;
 const HEIGHT_MIN            = 100;
-const HEIGHT_MAX            = 4000;
+const HEIGHT_MAX            = 2000;
 const CAM_FOV               = 30;
 const VIEW_BIAS             = 0.55;
 const VIEW_CLOSE            = 500;
-const VIEW_FAR              = 5000;
-const VIEW_BUFFER_T         = 1.5;
+const VIEW_FAR              = 2600;
+const VIEW_BUFFER_T         = 1.5 ;
 const BOTTOM_BUFFER_T       = 1.0;
 
 const EVICT_BUFFER          = 1;
@@ -25,23 +25,38 @@ const EVICT_GRACE_MS        = 300;
 const RETRY_AFTER_MS        = 1500;
 const POLL_CONCURRENCY      = 8;
 const FETCH_CONCURRENCY     = 3;
-const MAX_TILES             = 60;
+const MAX_TILES             = 85;
 const RETILE_MS             = 350;
 
 const DATA_TILE_FACTOR      = 10;
 const DATA_TILE_W           = TILE_W * DATA_TILE_FACTOR;
 const DATA_TILE_H           = TILE_H * DATA_TILE_FACTOR;
 
-const POI_GEO               = new THREE.BoxGeometry(10, 10, 10);
-const POI_MAT               = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
-const POI_BUILDING_MAT      = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
-const BUILDING_MAT          = new THREE.MeshStandardMaterial({ color: 0xff4433, roughness: 1 });
-const FLOOR_MAT             = new THREE.MeshBasicMaterial({ color: 0xff4433, roughness: 1, wireframe:true });
-const EMPTY_GRID_MAT        = new THREE.MeshBasicMaterial({ color: 0xbb3333, wireframe: true });
-const PRE_LOAD_MAT          = new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true });
-const POI_HEIGHT            = 2;
-const POI_INFLUENCE_RADIUS  = 8;
+const COL_MAIN              = 0xff3322;
+const COL_SUSP              = 0xffcc77;
+const COL_CONF              = 0xffffff;
 
+const POI_GEO                       = new THREE.BoxGeometry(24, 20, 24);
+const POI_SUSPECTED_MAT             = new THREE.MeshStandardMaterial({ color: COL_SUSP, roughness: 1 });
+const POI_CONFIRMED_MAT             = new THREE.MeshStandardMaterial({ color: COL_CONF, roughness: 1 });
+const POI_SUSPECTED_HOVER_MAT       = new THREE.MeshStandardMaterial({ color: COL_SUSP, roughness: 0.6 });
+const POI_CONFIRMED_HOVER_MAT       = new THREE.MeshStandardMaterial({ color: COL_CONF, roughness: 0.6 });
+const POI_SUSPECTED_SELECTED_MAT    = new THREE.MeshStandardMaterial({ color: COL_SUSP, roughness: 0.4, emissive: new THREE.Color(COL_SUSP) });
+const POI_CONFIRMED_SELECTED_MAT    = new THREE.MeshStandardMaterial({ color: COL_CONF, roughness: 0.4, emissive: new THREE.Color(COL_CONF) });
+const BUILDING_MAT                  = new THREE.MeshStandardMaterial({ color: COL_MAIN, roughness: 1 });
+const FLOOR_MAT                     = new THREE.MeshBasicMaterial({ color: COL_MAIN, wireframe:true });
+const EMPTY_GRID_MAT                = new THREE.MeshBasicMaterial({ color: 0xbb3333, wireframe: true });
+const PRE_LOAD_MAT                  = new THREE.MeshBasicMaterial({ color: 0x222222, wireframe: true });
+const POI_HEIGHT                    = 2;
+const POI_INFLUENCE_RADIUS          = 16;
+
+const MATCH_M     = 20;
+let ignoredList   = [];
+let confirmedList = [];
+let showSuspected = true;
+
+const POI_ZOOM_HEIGHT = 300;
+const POI_ZOOM_TILT   = Math.PI / 2.5;
 
 const SERVER    = 'http://localhost:3000';
 let   useServer = false;
@@ -56,7 +71,7 @@ async function detectServer() {
         : '[server] not found — using Overpass directly');
 }
 await detectServer();
-
+await loadPOILists(); 
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
@@ -70,33 +85,29 @@ renderer.setSize(renderer.domElement.clientWidth, renderer.domElement.clientHeig
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping  = true;
-controls.dampingFactor  = 0.08;
-controls.minDistance    = VIEW_CLOSE;
-controls.maxDistance    = VIEW_FAR;
-controls.minPolarAngle  = 0;
-controls.maxPolarAngle  = (Math.PI / 2) * 0.3;
+controls.enableDamping          = true;
+controls.dampingFactor          = 0.08;
+controls.minDistance            = VIEW_CLOSE;
+controls.maxDistance            = VIEW_FAR;
+controls.minPolarAngle          = 0.01;
+controls.maxPolarAngle          = (Math.PI / 2) * 0.7;
+controls.screenSpacePanning     = false;
+controls.rotateSpeed            = 0.2;
 
-/*
-TEMP
-disabled rotation
-maybe reenable later if compass and rotation is added
-*/
 controls.mouseButtons = {
     LEFT:   THREE.MOUSE.PAN,
     MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT:  THREE.MOUSE.PAN,
+    RIGHT:  THREE.MOUSE.ROTATE,
 };
 controls.touches = {
     ONE: THREE.TOUCH.PAN,
-    TWO: THREE.TOUCH.PAN,
+    TWO: THREE.TOUCH.ROTATE,
 };
 
-/*
-TO BE FIXED
-must be controllable, to move on animation
-can be disabled when rotation is disabled
-*/
+
+
+
+
 function lockCurrentTilt() {
     return;
     const offset = camera.position.clone().sub(controls.target);
@@ -109,10 +120,13 @@ function lockCurrentTilt() {
 }
 lockCurrentTilt();
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-const sun = new THREE.DirectionalLight(0xffffff, 2.5);
-sun.position.set(300, 600, 200);
-scene.add(sun);
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const main_sun = new THREE.DirectionalLight(0xffeeee, 2.0);
+const alt_sun  = new THREE.DirectionalLight(0xeeffff, 0.5);
+main_sun.position.set(30000, 60000, 20000);
+alt_sun.position.set(-300000, 0, 0);
+scene.add(main_sun);
+scene.add(alt_sun);
 
 
 const ground = new THREE.Mesh(
@@ -125,6 +139,66 @@ const ground = new THREE.Mesh(
 ground.position.y = -1;
 //scene.add(ground);
 
+function getBaseMat(m)     { return m.userData.poiType === 'confirmed' ? POI_CONFIRMED_MAT          : POI_SUSPECTED_MAT; }
+function getHoverMat(m)    { return m.userData.poiType === 'confirmed' ? POI_CONFIRMED_HOVER_MAT     : POI_SUSPECTED_HOVER_MAT; }
+function getSelectedMat(m) { return m.userData.poiType === 'confirmed' ? POI_CONFIRMED_SELECTED_MAT  : POI_SUSPECTED_SELECTED_MAT; }
+
+function redrawAllTiles() {
+    for (const [, tile] of tiles.map) tile.redraw();
+    refreshPOIOut();
+}
+
+function parseCSV(text) {
+    const lines = text.trim().split('\n')
+        .map(l => l.replace(/\r$/, '').trim())
+        .filter(l => l && !l.startsWith('#'));
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim());
+    return lines.slice(1).map(line => {
+        const vals = line.split(',').map(v => v.trim());
+        const obj = {};
+        headers.forEach((h, i) => { if (vals[i] !== undefined) obj[h] = vals[i]; });
+        return obj;
+    });
+}
+
+function loadIgnoredCSV(text) {
+    return parseCSV(text)
+        .map(r => ({ lat: parseFloat(r.lat), lon: parseFloat(r.lon) }))
+        .filter(r => !isNaN(r.lat) && !isNaN(r.lon));
+}
+
+function loadConfirmedCSV(text) {
+    return parseCSV(text).map(r => {
+        const lat = parseFloat(r.lat);
+        const lon = parseFloat(r.lon);
+        if (isNaN(lat) || isNaN(lon)) return null;
+        const { lat: _a, lon: _b, ...rest } = r;
+        return { lat, lon, tags: rest };
+    }).filter(Boolean);
+}
+
+async function loadPOILists() {
+    const tryLoad = async (url, parser) => {
+        try {
+            const res = await fetch(url);
+            return res.ok ? parser(await res.text()) : [];
+        } catch { return []; }
+    };
+    [ignoredList, confirmedList] = await Promise.all([
+        tryLoad('/ignored.csv',  loadIgnoredCSV),
+        tryLoad('/confirmed.csv', loadConfirmedCSV),
+    ]);
+    console.log(`[POI lists] ${ignoredList.length} ignored, ${confirmedList.length} confirmed`);
+}
+
+function matchCoord(lat, lon, list) {
+    return list.find(e => {
+        const dx = (lon - e.lon) * LON_M;
+        const dz = (lat - e.lat) * LAT_M;
+        return Math.hypot(dx, dz) < MATCH_M;
+    }) ?? null;
+}
 
 function tileLatLon(tx, ty) {
     return { lat: ORIGIN.lat + ty * TILE_DEG, lon: ORIGIN.lon + tx * TILE_DEG };
@@ -360,12 +434,34 @@ function isPOINearBuilding(point, polygon, radius) {
     return false;
 }
 
-function buildingMesh(way, nodeById, poiWorlds = []) {
+function buildingMesh(way, nodeById, pois = []) {
+    let buildingType = null;
+
     const pts = (way.nodes || [])
         .map(id => nodeById.get(id))
         .filter(Boolean)
         .map(n => toWorld(n.lat, n.lon));
     if (pts.length < 3) return null;
+
+    for (const poi of pois) {
+    if (!isPOINearBuilding(poi, pts, POI_INFLUENCE_RADIUS))
+        continue;
+
+    if (poi.type === 'confirmed') {
+        buildingType = 'confirmed';
+        break;
+    }
+
+    if (!buildingType)
+        buildingType = 'suspected';
+    }
+
+    let material = BUILDING_MAT;
+
+    if (buildingType === 'confirmed')
+        material = POI_CONFIRMED_MAT;
+    else if (buildingType === 'suspected')
+        material = POI_SUSPECTED_MAT;
 
     const tags = way.tags || {};
     let h = 10;
@@ -381,7 +477,7 @@ function buildingMesh(way, nodeById, poiWorlds = []) {
     }
     shape.closePath();
 
-    const nearPOI = poiWorlds.some(pw =>
+    const nearPOI = pois.some(pw =>
         isPOINearBuilding(pw, pts, POI_INFLUENCE_RADIUS)
     );
     try {
@@ -392,10 +488,7 @@ function buildingMesh(way, nodeById, poiWorlds = []) {
         geo.applyMatrix4(
             new THREE.Matrix4().makeRotationX(-Math.PI / 2)
         );
-        const mesh = new THREE.Mesh(
-            geo,
-            nearPOI ? POI_BUILDING_MAT : BUILDING_MAT
-        );
+        const mesh = new THREE.Mesh(geo, material);
         mesh.userData.tags = tags;
         return mesh;
     } catch {
@@ -403,7 +496,7 @@ function buildingMesh(way, nodeById, poiWorlds = []) {
     }
 }
 
-
+const _poiMeshSet = new Set();
 
 class Tile {
     constructor(tx, ty, dataTiles) {
@@ -458,38 +551,114 @@ class Tile {
         this._placeholder = null;
     }
 
-    _processData(data, pois = []) {
+    _clearMeshes() {
+        const toRemove = [];
+        this.group.traverse(obj => {
+            if (obj.isMesh && obj !== this._placeholder) toRemove.push(obj);
+        });
+        for (const obj of toRemove) {
+            this.group.remove(obj);
+            if (!obj.userData?.isPOI) obj.geometry?.dispose(); // spare shared POI_GEO
+            if (obj.userData?.isPOI) {
+                _poiMeshSet.delete(obj);
+                if (obj === selectedPOI) selectedPOI = null;
+                if (obj === hoveredPOI)  hoveredPOI  = null;
+            }
+        }
+    }
+
+    _buildMeshes(data, pois) {
+        this._clearMeshes();
+
+        const minX = this.tx * TILE_W;
+        const maxX = (this.tx + 1) * TILE_W;
+        const minZ = -(this.ty + 1) * TILE_H;
+        const maxZ = -this.ty  * TILE_H;
+
         const nodeMap = new Map();
         for (const el of data.elements) {
             if (el.type === 'node') nodeMap.set(el.id, el);
         }
 
-        const poiWorlds = pois.map(p => toWorld(p.lat, p.lon));
+        // ── Classify suspected POIs against both lists ─────────────────────────────
+        const activeSuspected        = [];
+        const confirmedFromSuspected = [];
 
+        for (const poi of pois) {
+            if (matchCoord(poi.lat, poi.lon, ignoredList)) continue;          // culled
+            const conf = matchCoord(poi.lat, poi.lon, confirmedList);
+            if (conf) {
+                confirmedFromSuspected.push({                                  // replaced
+                    lat: conf.lat, lon: conf.lon,
+                    tags: { ...poi.tags, ...conf.tags },                       // confirmed data wins
+                });
+            } else if (showSuspected) {
+                activeSuspected.push(poi);
+            }
+        }
+
+        // ── Confirmed POIs with no matching suspected in this tile ─────────────────
+        const confirmedOnly = confirmedList.filter(conf => {
+            const pw = toWorld(conf.lat, conf.lon);
+            if (pw.x < minX || pw.x >= maxX || pw.z <= minZ || pw.z > maxZ) return false;
+            return !pois.some(p => {
+                const dx = (p.lon - conf.lon) * LON_M;
+                const dz = (p.lat - conf.lat) * LAT_M;
+                return Math.hypot(dx, dz) < MATCH_M;
+            });
+        });
+
+        const allConfirmed = [...confirmedFromSuspected, ...confirmedOnly];
+        const allActive    = [...activeSuspected, ...allConfirmed];
+        //const allWorlds    = allActive.map(p => toWorld(p.lat, p.lon));
+        const poiInfo = [
+            ...activeSuspected.map(p => ({
+                ...toWorld(p.lat, p.lon),
+                type: 'suspected'
+            })),
+            ...allConfirmed.map(p => ({
+                ...toWorld(p.lat, p.lon),
+                type: 'confirmed'
+            }))
+        ];
+
+        // ── Buildings ──────────────────────────────────────────────────────────────
         for (const el of data.elements) {
             if (el.type === 'way' && el.tags?.building) {
-                const m = buildingMesh(el, nodeMap, poiWorlds);
+                    const m = buildingMesh(el, nodeMap, poiInfo);
                 if (m) this.group.add(m);
             }
         }
 
-        const minX = this.tx * TILE_W;
-        const maxX = (this.tx + 1) * TILE_W;
-        const minZ = -(this.ty + 1) * TILE_H;
-        const maxZ = -this.ty * TILE_H;
+        // ── POI cubes ──────────────────────────────────────────────────────────────
+        const addPOI = (poi, mat) => {
+            const pw = toWorld(poi.lat, poi.lon);
+            if (pw.x < minX || pw.x >= maxX || pw.z <= minZ || pw.z > maxZ) return;
+            const mesh = new THREE.Mesh(POI_GEO, mat);
+            mesh.position.set(pw.x, POI_HEIGHT, pw.z);
+            mesh.userData.tags    = { ...poi.tags, _lat: poi.lat, _lon: poi.lon };
+            mesh.userData.isPOI   = true;
+            mesh.userData.poiType = (mat === POI_SUSPECTED_MAT) ? 'suspected' : 'confirmed';
+            _poiMeshSet.add(mesh);
+            this.group.add(mesh);
+        };
 
-        for (let i = 0; i < pois.length; i++) {
-            const pw = poiWorlds[i];
-            if (pw.x >= minX && pw.x < maxX && pw.z > minZ && pw.z <= maxZ) {
-                const mesh = new THREE.Mesh(POI_GEO, POI_MAT);
-                mesh.position.set(pw.x, POI_HEIGHT, pw.z);
-                mesh.userData.tags = pois[i].tags;
-                this.group.add(mesh);
-            }
-        }
-
+        for (const poi of activeSuspected) addPOI(poi, POI_SUSPECTED_MAT);
+        for (const poi of allConfirmed)    addPOI(poi, POI_CONFIRMED_MAT);
+    }
+    
+    _processData(data, pois = []) {
+        this._cachedData = data;
+        this._cachedPois = pois;
+        this._buildMeshes(data, pois);
         this._removePlaceholder();
         this.state = 'loaded';
+    }
+
+    redraw() {
+        if (this.state !== 'loaded') return;
+        this._buildMeshes(this._cachedData, this._cachedPois ?? []);
+        refreshPOIOut();
     }
 
     async checkCache() {
@@ -542,12 +711,10 @@ class Tile {
 
     dispose() {
         this._abort.abort();
+        this._clearMeshes();
+        refreshPOIOut();
         this._removePlaceholder();
         scene.remove(this.group);
-        this.group.traverse(obj => {
-            if (!obj.isMesh) return;
-            obj.geometry?.dispose();
-        });
     }
 }
 
@@ -796,7 +963,7 @@ const northButton   = document.getElementById('north');
 const poiButton     = document.getElementById('poi');
 const wideButton    = document.getElementById('wide');
 const angleSlider   = document.getElementById('angle');
-const poiOOut       = document.getElementById('poi');
+const poiOut       = document.getElementById('poi');
 
 let angleSliderVal;
 
@@ -876,6 +1043,177 @@ function resizeRenderer() {
 
 resizeRenderer();
 window.addEventListener('resize', resizeRenderer);
+
+
+
+const raycaster    = new THREE.Raycaster();
+const _mouseNDC    = new THREE.Vector2();
+let hoveredPOI     = null;
+let selectedPOI    = null;
+let _savedCamState = null;
+let _animId        = null;
+let _ptrDown       = null;
+
+//const poiOut = document.getElementById('poiout');
+
+
+function animateTo(newTarget, newCam, duration = 650) {
+    if (_animId !== null) cancelAnimationFrame(_animId);
+    const t0 = controls.target.clone();
+    const c0 = camera.position.clone();
+    const t  = performance.now();
+    controls.enabled = false;
+
+    (function tick(now) {
+        const raw  = Math.min((now - t) / duration, 1);
+        const ease = raw < 0.5 ? 2*raw*raw : -1 + (4 - 2*raw)*raw;
+        controls.target.lerpVectors(t0, newTarget, ease);
+        camera.position.lerpVectors(c0, newCam, ease);
+        controls.update();
+        if (raw < 1) _animId = requestAnimationFrame(tick);
+        else { _animId = null; controls.enabled = true; }
+    })(t);
+}
+
+function zoomToPOI(mesh) {
+    const tgt = new THREE.Vector3(mesh.position.x, 0, mesh.position.z);
+    const az  = Math.atan2(
+        camera.position.x - controls.target.x,
+        camera.position.z - controls.target.z,
+    );
+    const h = VIEW_CLOSE;
+    animateTo(tgt, new THREE.Vector3(
+        tgt.x + Math.sin(az) * h,
+        h,
+        tgt.z + Math.cos(az) * h,
+    ));
+}
+
+function zoomOut() {
+    if (_savedCamState) {
+        animateTo(_savedCamState.target, _savedCamState.cam);
+        _savedCamState = null;
+    } else {
+        const tgt = new THREE.Vector3(controls.target.x, 0, controls.target.z);
+        animateTo(tgt, new THREE.Vector3(tgt.x, 1200, tgt.z));
+    }
+}
+
+
+function fmtHover(tags = {}) {
+    const name   = tags.name
+        || (tags.amenity || tags.shop || '').replace(/_/g, ' ')
+        || 'Point of interest';
+    const coords = tags._lat !== undefined
+        ? ` · ${(+tags._lat).toFixed(5)}, ${(+tags._lon).toFixed(5)}`
+        : '';
+    return name + coords;
+}
+function fmtFull(tags = {}) {
+    const rows = [];
+    rows.push('SUSPECTED LOCATION');
+    //if (tags.name)          rows.push(`<strong>${tags.name}</strong>`);
+    if (tags.name)          rows.push(`${tags.name}`);
+    if (tags.amenity)       rows.push(tags.amenity.replace(/_/g, ' '));
+    if (tags.shop)          rows.push(`Shop · ${tags.shop.replace(/_/g, ' ')}`);
+    //if (tags.cuisine)       rows.push(`${tags.cuisine.replace(/[_;]/g, ' · ')}`);
+    //if (tags.opening_hours) rows.push(`${tags.opening_hours}`);
+    //if (tags.phone)         rows.push(`${tags.phone}`);
+    //if (tags.website)       rows.push(`<a href="${tags.website}" target="_blank">website</a>`);
+    const addr = [tags['addr:housenumber'], tags['addr:street']].filter(Boolean).join(' ');
+    if (addr)               rows.push(` ${addr}`);
+    if (tags._lat !== undefined)
+        rows.push(`<small>${(+tags._lat).toFixed(5)}, ${(+tags._lon).toFixed(5)}</small>`);
+    return rows.join('<br>') || 'No details';
+}
+
+function refreshPOIOut() {
+    if (!poiOut) return;
+    if (selectedPOI)     poiOut.innerHTML = fmtFull(selectedPOI.userData.tags);
+    else if (hoveredPOI) poiOut.innerHTML = fmtHover(hoveredPOI.userData.tags);
+    else                 poiOut.innerHTML = '';
+}
+
+
+function hitPOI(clientX, clientY) {
+    const r = renderer.domElement.getBoundingClientRect();
+    _mouseNDC.set(
+        ((clientX - r.left) / r.width)  *  2 - 1,
+        ((clientY - r.top)  / r.height) * -2 + 1,
+    );
+    raycaster.setFromCamera(_mouseNDC, camera);
+    const hits = raycaster.intersectObjects([..._poiMeshSet]);
+    return hits.length ? hits[0].object : null;
+}
+
+renderer.domElement.addEventListener('pointermove', e => {
+    const hit = hitPOI(e.clientX, e.clientY);
+    if (hit === hoveredPOI) return;
+
+    /*
+    MAYBE REIMPLEMENT IF NEEDED - HOVER MATS FOR POIS
+
+    if (hoveredPOI && hoveredPOI !== selectedPOI) hoveredPOI.material = POI_MAT;
+    hoveredPOI = hit;
+    if (hoveredPOI && hoveredPOI !== selectedPOI) hoveredPOI.material = POI_HOVER_MAT;
+
+    */
+
+    renderer.domElement.style.cursor = hoveredPOI ? 'pointer' : '';
+    refreshPOIOut();
+});
+
+renderer.domElement.addEventListener('pointermove', e => {
+    const hit = hitPOI(e.clientX, e.clientY);
+    if (hit === hoveredPOI) return;
+
+    if (hoveredPOI && hoveredPOI !== selectedPOI) hoveredPOI.material = getBaseMat(hoveredPOI);
+    hoveredPOI = hit;
+    if (hoveredPOI && hoveredPOI !== selectedPOI) hoveredPOI.material = getHoverMat(hoveredPOI);
+
+    renderer.domElement.style.cursor = hoveredPOI ? 'pointer' : '';
+    refreshPOIOut();
+});
+
+renderer.domElement.addEventListener('pointerdown', e => { _ptrDown = { x: e.clientX, y: e.clientY }; });
+
+renderer.domElement.addEventListener('pointerup', e => {
+    if (!_ptrDown) return;
+    const wasDrag = Math.hypot(e.clientX - _ptrDown.x, e.clientY - _ptrDown.y) > 6;
+    _ptrDown = null;
+    if (wasDrag) return;
+
+    const hit = hitPOI(e.clientX, e.clientY);
+
+    if (hit) {
+        if (hit === selectedPOI) return;
+        if (!selectedPOI) _savedCamState = { target: controls.target.clone(), cam: camera.position.clone() };
+        if (selectedPOI)  selectedPOI.material = selectedPOI === hoveredPOI ? getHoverMat(selectedPOI) : getBaseMat(selectedPOI);
+        selectedPOI          = hit;
+        selectedPOI.material = getSelectedMat(selectedPOI);
+        refreshPOIOut();
+        zoomToPOI(selectedPOI);
+    } else if (selectedPOI) {
+        selectedPOI.material = selectedPOI === hoveredPOI ? getHoverMat(selectedPOI) : getBaseMat(selectedPOI);
+        selectedPOI = null;
+        refreshPOIOut();
+        zoomOut();
+    }
+});
+
+window.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !selectedPOI) return;
+    selectedPOI.material = selectedPOI === hoveredPOI ? getHoverMat(selectedPOI) : getBaseMat(selectedPOI);
+    selectedPOI = null;
+    refreshPOIOut();
+    zoomOut();
+});
+
+// Suspected toggle
+document.getElementById('showsuspected')?.addEventListener('change', e => {
+    showSuspected = e.target.checked;
+    redrawAllTiles();
+});
 
 
 const dataTiles = new DataTiles();

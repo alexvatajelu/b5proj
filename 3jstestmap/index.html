@@ -8,9 +8,9 @@
   </head>
   <body>
 
-    <canvas id="canvas" style="display: block; width: 100%; height: 90%;"></canvas>
+    <canvas id="canvas" style="display: block; width: 100%; height: 80%;"></canvas>
 
-    <div style="top: 90vh; position: fixed;">
+    <div style="top: 80vh; position: fixed;">
       <p style="margin: 0px"> controls </p>
       <div style="display: flex; gap: 5px; height: 40px">
         <p          id="livepos"  >current location</p>
@@ -22,11 +22,13 @@
         <p          id="dir"      style="width: 30px">map orientation</p>
         <button     id="north"    >north</button>
         <div                      style="width: 20px"></div>
-        <button     id="poi"      >poi</button>
+        <button     id="poia"      >poi</button>
         <button     id="wide"     >wide</button>
         <input      id="angle"    type="range" min="0" max="100" value="0" style="width: 100px;"></input>
         <div                      style="width: 20px"></div>
-        <textarea   id="poi"      style="width: 300px">out</textarea>
+        <textarea   id="poi"      style="width: 400px; height: 100px">out</textarea>
+        <label><input type="checkbox" id="showsuspected" checked> Suspected POIs</label>
+        <div id="poiout"></div>
       </div>
     </div>
     

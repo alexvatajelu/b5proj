@@ -1,0 +1,4 @@
+lat,lon,name,amenity,opening_hours,phone,website
+51.50523,-0.08712,The Crown,pub,Mon-Sun 12-11
+51.50000,-0.09500,My Coffee,cafe,Mon-Fri 8-6,+44 20 1234 5678,https://example.com
+51.49800,-0.09100,New Place,restaurant
