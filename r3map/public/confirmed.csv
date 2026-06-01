@@ -1,4 +1,4 @@
-lat,lon,name,info
-51.50523,-0.08712,The Crown,
-51.50000,-0.09500,My Coffee,cafe
-51.49800,-0.09100,New Place,restaurant
+lat,lon,name,info,date added
+51.50523,-0.08712,The Crown,,
+51.50000,-0.09500,My Coffee,cafe,
+51.49800,-0.09100,New Place,restaurant,

@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PORT           = 3000;
-const CACHE_DIR      = path.join(__dirname, 'tile_cache');
+const PORT = process.env.PORT || 3000;
+const CACHE_DIR     = process.env.CACHE_DIR     || path.join(__dirname, 'tile_cache');
+const POI_CACHE_DIR = process.env.POI_CACHE_DIR || path.join(__dirname, 'poi_cache');
 const MAX_CACHE_TILES = 10000;
 
 const ORIGIN   = { lat: 51.505, lon: -0.09 };
@@ -27,7 +28,6 @@ const MAX_QUEUE_SIZE    = 40;
 const BG_QUEUE_SLOTS    = 4;    // max background items allowed in q at once
 const DEFAULT_PRIORITY  = 5;
 
-const POI_CACHE_DIR    = path.join(__dirname, 'poi_cache');
 const DATA_TILE_FACTOR = 10;                       // data tile = 10×10 geom tiles
 const POI_QUERY_REGEX  =
     'Sports Direct|B&M|Iceland|Sainsbury|Spar|Costcutter|Budgens|' +

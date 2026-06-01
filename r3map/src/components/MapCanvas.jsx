@@ -59,6 +59,7 @@ const COL_MAIN  = 0xff3322;
 const COL_SUSP  = 0xffaaaa;
 const COL_CONF  = 0xffffff;
 
+
 const SERVER    = 'http://localhost:3000';
 
 // ─── shared geometries / materials (created once, never disposed) ─────────────
